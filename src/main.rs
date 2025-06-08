@@ -1,4 +1,5 @@
 mod eval;
+mod lexer;
 
 use indexmap::IndexMap;
 
