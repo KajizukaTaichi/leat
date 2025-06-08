@@ -1,5 +1,5 @@
-let dec n = n - 1 in
-let fact n =
+let dec n := n - 1 in
+let fact n :=
     if n == 0
         then 1
         else fact (dec n) * n
