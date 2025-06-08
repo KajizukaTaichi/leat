@@ -55,10 +55,3 @@ impl Expr {
         }
     }
 }
-
-pub enum LeatError {
-    UndefinedName(String),
-    InvalidBind(Expr),
-    InvalidArg(Expr),
-    CallNotLambda(Expr),
-}
