@@ -3,6 +3,7 @@ use crate::*;
 impl Expr {
     pub fn parse(tokens: Vec<Token>) -> Option<Expr> {
         if let Token::Let = tokens.first()? {
+            let tokens = tokens.get(1..)?;
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Assign).collect();
             let [name, tokens] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::In).collect();
@@ -12,6 +13,7 @@ impl Expr {
             let after_expr = Box::new(Expr::parse(after_expr)?);
             Some(Expr::Let(name, value, after_expr))
         } else if let Token::If = tokens.first()? {
+            let tokens = tokens.get(1..)?;
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Then).collect();
             let [cond, tokens] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Else).collect();
