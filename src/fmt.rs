@@ -33,7 +33,7 @@ impl Display for LeatError {
             LeatError::NonLambda(expr) => write!(f, "can't apply non-lambda value `{expr}`"),
             LeatError::InvalidArg(name) => write!(f, "invalid argument's name `{name}` for lambda"),
             LeatError::InvalidBind(expr) => write!(f, "invalid bind `{expr}` using let expression"),
-            LeatError::InvalidOperation => write!(f, "invalid operation, not allowed in Leatz"),
+            LeatError::InvalidOperation => write!(f, "invalid operation, not allowed in Leat"),
         }
     }
 }
