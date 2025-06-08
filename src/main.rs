@@ -27,6 +27,6 @@ type Env = IndexMap<String, Value>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Lambda {
-    BuiltIn(fn(Value) -> Option<Value>, Env),
+    BuiltIn(fn(Value, Env) -> Option<Value>, Env),
     UserDefined(String, Box<Expr>, Env),
 }
