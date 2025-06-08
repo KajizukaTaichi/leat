@@ -7,6 +7,13 @@ pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
+    run().unwrap();
+}
+
+fn run() -> Option<()> {
+    let code = "add 1 2";
+    dbg!(Expr::parse(tokenize(code)?));
+    Some(())
 }
 
 #[derive(Clone, Debug, PartialEq)]
