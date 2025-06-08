@@ -4,14 +4,34 @@ mod parse;
 
 use indexmap::IndexMap;
 pub use lexer::*;
+use rustyline::{DefaultEditor, error::ReadlineError};
 
 fn main() {
     println!("Hello, world!");
-    dbg!(run(include_str!("../example.lt")));
+    let mut rl = DefaultEditor::new().unwrap();
+    let mut buf = String::new();
+    let mut env = stdlib();
+    loop {
+        match rl.readline("> ") {
+            Ok(code) => {
+                buf.push_str(&code);
+                if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
+                    if let Some(result) = ast.eval(&mut env) {
+                        println!("{result:?}");
+                    }
+                    buf.clear();
+                }
+            }
+            Err(ReadlineError::Interrupted) => {
+                buf.clear();
+            }
+            Err(ReadlineError::Eof) => break,
+            _ => {}
+        }
+    }
 }
 
-fn run(code: &str) -> Option<Value> {
-    let ast = Expr::parse(lex(code)?)?;
+fn stdlib() -> Env {
     macro_rules! curry_2arg {
         ($processing: expr) => {
             Value::Lambda(Lambda::BuiltIn(
@@ -31,7 +51,7 @@ fn run(code: &str) -> Option<Value> {
             ))
         };
     }
-    let env = &mut IndexMap::from([
+    IndexMap::from([
         (
             String::from("+"),
             curry_2arg!(|a, b| {
@@ -145,8 +165,7 @@ fn run(code: &str) -> Option<Value> {
                 IndexMap::new(),
             )),
         ),
-    ]);
-    ast.eval(env)
+    ])
 }
 
 #[derive(Clone, Debug, PartialEq)]
