@@ -13,28 +13,69 @@ fn main() {
 fn run() -> Option<()> {
     let code = r#"let b = + 1 in b 2"#;
     let ast = Expr::parse(tokenize(code)?)?;
-    let env = &mut IndexMap::from([(
-        String::from("+"),
-        Value::Lambda(Lambda::BuiltIn(
-            |a, mut env| {
-                Some(Value::Lambda(Lambda::BuiltIn(
-                    |b, env| {
-                        let a = env.get("a")?.clone();
-                        match [a, b] {
-                            [Value::Number(a), Value::Number(b)] => Some(Value::Number(a + b)),
-                            [Value::String(a), Value::String(b)] => Some(Value::String(a + &b)),
-                            _ => None,
-                        }
-                    },
-                    {
-                        env.insert(String::from("a"), a);
-                        env
-                    },
-                )))
-            },
-            IndexMap::new(),
-        )),
-    )]);
+
+    macro_rules! curry_2arg {
+        ($processing: expr) => {
+            Value::Lambda(Lambda::BuiltIn(
+                |a, mut env| {
+                    Some(Value::Lambda(Lambda::BuiltIn(
+                        |b, env| {
+                            let a = env.get("a")?.clone();
+                            $processing(a, b)
+                        },
+                        {
+                            env.insert(String::from("a"), a);
+                            env
+                        },
+                    )))
+                },
+                IndexMap::new(),
+            ))
+        };
+    }
+
+    let env = &mut IndexMap::from([
+        (
+            String::from("+"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a + b)),
+                    [Value::String(a), Value::String(b)] => Some(Value::String(a + &b)),
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("-"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a - b)),
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("*"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a - b)),
+                    [Value::String(a), Value::Number(b)] => {
+                        Some(Value::String(a.repeat(b as usize)))
+                    }
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("/"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a / b)),
+                    _ => None,
+                }
+            }),
+        ),
+    ]);
     dbg!(ast.eval(env));
     Some(())
 }
