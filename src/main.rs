@@ -3,8 +3,8 @@ mod lexer;
 mod parse;
 
 use indexmap::IndexMap;
-pub use lexer::*;
 use rustyline::{DefaultEditor, error::ReadlineError};
+pub use {eval::*, lexer::*};
 
 fn main() {
     println!("Hello, world!");
@@ -29,6 +29,41 @@ fn main() {
             _ => {}
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Expr {
+    If(Box<Expr>, Box<Expr>, Box<Expr>),
+    Let(Box<Expr>, Box<Expr>, Box<Expr>),
+    Call(Box<Expr>, Box<Expr>),
+    Variable(String),
+    Literal(Value),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Value {
+    Number(f64),
+    String(String),
+    Bool(bool),
+    Lambda(Lambda),
+    Type(Type),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Type {
+    Number,
+    String,
+    Bool,
+    Lambda,
+    Kind,
+}
+
+type Env = IndexMap<String, Value>;
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Lambda {
+    BuiltIn(fn(Value, Env) -> Result<Value, LeatError>, Env),
+    UserDefined(String, Box<Expr>, Env),
 }
 
 fn stdlib() -> Env {
@@ -166,39 +201,4 @@ fn stdlib() -> Env {
             )),
         ),
     ])
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Expr {
-    If(Box<Expr>, Box<Expr>, Box<Expr>),
-    Let(Box<Expr>, Box<Expr>, Box<Expr>),
-    Call(Box<Expr>, Box<Expr>),
-    Variable(String),
-    Literal(Value),
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Value {
-    Number(f64),
-    String(String),
-    Bool(bool),
-    Lambda(Lambda),
-    Type(Type),
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Type {
-    Number,
-    String,
-    Bool,
-    Lambda,
-    Kind,
-}
-
-type Env = IndexMap<String, Value>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Lambda {
-    BuiltIn(fn(Value, Env) -> Option<Value>, Env),
-    UserDefined(String, Box<Expr>, Env),
 }
