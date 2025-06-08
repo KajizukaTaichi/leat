@@ -1,7 +1,7 @@
 use crate::*;
 
 impl Expr {
-    fn eval(&self, env: &mut Env) -> Option<Value> {
+    pub fn eval(&self, env: &mut Env) -> Option<Value> {
         match self {
             Expr::Literal(value) => Some(value.to_owned()),
             Expr::Variable(name) => env.get(name).cloned(),
