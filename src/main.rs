@@ -7,7 +7,10 @@ pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
-    dbg!(run(r#"let inc n = + n 1 in inc (inc 5)"#));
+    dbg!(run(r#"
+        let inc n = + n 1 in
+        inc (inc 5)
+    "#));
 }
 
 fn run(code: &str) -> Option<Value> {
