@@ -8,9 +8,8 @@ pub use lexer::*;
 fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
-        let add a b = + a b in
-        let c = add 3 in
-        c 1
+        let fact n = if == n 0 then 1 else * n (fact (- n 1)) in
+        fact 5
     "#));
 }
 
@@ -60,7 +59,7 @@ fn run(code: &str) -> Option<Value> {
             String::from("*"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a - b)),
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a * b)),
                     [Value::String(a), Value::Number(b)] => {
                         Some(Value::String(a.repeat(b as usize)))
                     }
