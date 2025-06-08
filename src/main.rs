@@ -11,7 +11,7 @@ fn main() {
 }
 
 fn run() -> Option<()> {
-    let code = "add 1 2";
+    let code = "let a = add 1 2";
     dbg!(Expr::parse(tokenize(code)?));
     Some(())
 }
