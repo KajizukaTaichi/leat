@@ -11,7 +11,7 @@ fn main() {
 }
 
 fn run() -> Option<()> {
-    let code = "+ 1 3";
+    let code = "let b = + 1 3 in b";
     let ast = Expr::parse(tokenize(code)?)?;
     let env = &mut IndexMap::from([(
         String::from("+"),
