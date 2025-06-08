@@ -21,7 +21,7 @@ fn main() {
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     match ast.eval(&mut env) {
                         Ok(res) => println!("{res}"),
-                        Err(err) => println!("{err}"),
+                        Err(err) => println!("Error! {err}"),
                     }
 
                     buf.clear();
