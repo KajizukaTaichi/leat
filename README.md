@@ -3,11 +3,11 @@
 動的型付けかつインタプリタ型で安っぽいです
 
 ```ocaml
-let dec := (\ x . x - 1) in
+let |> := \ a . (\ f . f a) in
 let fact n :=
   if n == 0
     then 1
-    else fact (dec n) * n
+    else fact (n - 1) * n
 in
-fact (dec 7)
+5 |> fact
 ```
