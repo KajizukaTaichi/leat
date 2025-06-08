@@ -7,10 +7,10 @@ pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
-    run(r#"let b = + 1 in b 2"#).unwrap();
+    dbg!(run(r#"let b = + 1 in b 2"#));
 }
 
-fn run(code: &str) -> Option<()> {
+fn run(code: &str) -> Option<Value> {
     let ast = Expr::parse(tokenize(code)?)?;
     macro_rules! curry_2arg {
         ($processing: expr) => {
@@ -74,8 +74,7 @@ fn run(code: &str) -> Option<()> {
             }),
         ),
     ]);
-    dbg!(ast.eval(env));
-    Some(())
+    ast.eval(env)
 }
 
 #[derive(Clone, Debug, PartialEq)]
