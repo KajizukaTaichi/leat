@@ -9,7 +9,7 @@ fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
         let fact n = if == n 0 then 1 else * n (fact (- n 1)) in
-        fact 5
+        let inc = + 1 in fact (inc 5)
     "#));
 }
 
