@@ -12,7 +12,29 @@ fn main() {
 
 fn run() -> Option<()> {
     let code = "a b c";
-    dbg!(Expr::parse(tokenize(code)?));
+    let ast = Expr::parse(tokenize(code)?)?;
+    let env = IndexMap::from([(
+        String::from("+"),
+        Value::Lambda(Lambda::BuiltIn(
+            |a, env| {
+                Some(Value::Lambda(Lambda::BuiltIn(
+                    |b, env| {
+                        let a = env.get("a")?.clone();
+                        match [a, b] {
+                            [Value::Number(a), Value::Number(b)] => Some(Value::Number(a + b)),
+                            [Value::String(a), Value::String(b)] => Some(Value::String(a + &b)),
+                            _ => None,
+                        }
+                    },
+                    {
+                        env.insert(String::from("a"), a);
+                        env
+                    },
+                )))
+            },
+            IndexMap::new(),
+        )),
+    )]);
     Some(())
 }
 
