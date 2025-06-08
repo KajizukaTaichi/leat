@@ -1,5 +1,6 @@
 mod eval;
 mod lexer;
+mod parse;
 
 use indexmap::IndexMap;
 pub use lexer::*;
