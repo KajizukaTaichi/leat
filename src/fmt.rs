@@ -21,7 +21,7 @@ impl Display for Value {
             Value::Bool(b) => write!(f, "{b}"),
             Value::Lambda(Lambda::UserDefined(arg, body, _)) => write!(f, "(\\{arg}. {body})"),
             Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "(\\x. {func:?})"),
-            Value::Type(typ) => write!(f, "{}", format!("{typ:?}").to_lowercase()),
+            Value::Type(typ) => write!(f, "{}", format!("#{typ:?}").to_lowercase()),
         }
     }
 }
