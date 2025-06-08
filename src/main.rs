@@ -16,7 +16,7 @@ fn run() -> Option<()> {
     let env = IndexMap::from([(
         String::from("+"),
         Value::Lambda(Lambda::BuiltIn(
-            |a, env| {
+            |a, mut env| {
                 Some(Value::Lambda(Lambda::BuiltIn(
                     |b, env| {
                         let a = env.get("a")?.clone();
