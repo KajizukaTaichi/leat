@@ -3,8 +3,8 @@ mod lexer;
 mod parse;
 
 use indexmap::IndexMap;
+pub use lexer::*;
 use rustyline::{DefaultEditor, error::ReadlineError};
-pub use {eval::*, lexer::*};
 
 fn main() {
     println!("Hello, world!");
@@ -18,6 +18,7 @@ fn main() {
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     println!("{:?}", ast.eval(&mut env));
                 }
+                buf.clear();
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
