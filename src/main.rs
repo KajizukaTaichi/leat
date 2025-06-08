@@ -10,7 +10,7 @@ use rustyline::{DefaultEditor, error::ReadlineError};
 pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
-    println!("Hello, world!");
+    println!("Leat REPL");
     let mut rl = DefaultEditor::new().unwrap();
     let mut buf = String::new();
     let mut env = stdlib();
