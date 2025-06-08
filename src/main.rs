@@ -114,6 +114,33 @@ fn run(code: &str) -> Option<Value> {
                 }
             }),
         ),
+        (
+            String::from("cast"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Type(Type::String)] => {
+                        Some(Value::String(a.to_string()))
+                    }
+                    [Value::String(a), Value::Type(Type::Number)] => {
+                        if let Ok(n) = a.parse::<f64>() {
+                            Some(Value::Number(n))
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("|"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a | b)),
+                    _ => None,
+                }
+            }),
+        ),
     ]);
     ast.eval(env)
 }
