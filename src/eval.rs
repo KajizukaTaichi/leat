@@ -19,7 +19,8 @@ impl Expr {
             }
             Expr::Let(name, value, after_expr) => match *name.clone() {
                 Expr::Variable(name) => {
-                    env.insert(name.to_owned(), value.eval(env)?);
+                    let value = value.eval(env)?;
+                    env.insert(name.to_owned(), value);
                     after_expr.eval(env)
                 }
                 Expr::Call(name, arg) => {
@@ -32,6 +33,13 @@ impl Expr {
                 }
                 _ => None,
             },
+            Expr::If(cond, then, els) => {
+                if let Value::Bool(true) = cond.eval(env)? {
+                    then.eval(env)
+                } else {
+                    els.eval(env)
+                }
+            }
         }
     }
 }
