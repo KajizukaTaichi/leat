@@ -8,9 +8,8 @@ pub use lexer::*;
 fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
-        let inc n = + n 1 in
-        let dec n = - n 1 in
-        inc (dec (dec 5))
+        let fact n = if == n 0 then 1 else * n (fact (- n 1)) in
+        fact 2
     "#));
 }
 
@@ -76,6 +75,10 @@ fn run(code: &str) -> Option<Value> {
                     _ => None,
                 }
             }),
+        ),
+        (
+            String::from("=="),
+            curry_2arg!(|a, b| { Some(Value::Bool(a == b)) }),
         ),
     ]);
     ast.eval(env)
