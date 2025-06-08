@@ -1,4 +1,5 @@
 mod eval;
+mod fmt;
 mod lexer;
 mod parse;
 
@@ -18,7 +19,11 @@ fn main() {
                 buf.push_str("\n");
                 rl.add_history_entry(code).unwrap();
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
-                    println!("{:?}", ast.eval(&mut env));
+                    match ast.eval(&mut env) {
+                        Ok(res) => println!("{res}"),
+                        Err(err) => println!("{err}"),
+                    }
+
                     buf.clear();
                 }
             }
