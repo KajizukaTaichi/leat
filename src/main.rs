@@ -133,13 +133,17 @@ fn run(code: &str) -> Option<Value> {
             }),
         ),
         (
-            String::from("|"),
-            curry_2arg!(|a, b| {
-                match [a, b] {
-                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a | b)),
-                    _ => None,
-                }
-            }),
+            String::from("cast"),
+            Value::Lambda(Lambda::BuiltIn(
+                |a, _| match a {
+                    Value::Number(_) => Some(Value::Type(Type::Number)),
+                    Value::String(_) => Some(Value::Type(Type::String)),
+                    Value::Bool(_) => Some(Value::Type(Type::Bool)),
+                    Value::Lambda(_) => Some(Value::Type(Type::Lambda)),
+                    Value::Type(_) => Some(Value::Type(Type::Kind)),
+                },
+                IndexMap::new(),
+            )),
         ),
     ]);
     ast.eval(env)
