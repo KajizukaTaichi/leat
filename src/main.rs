@@ -80,6 +80,44 @@ fn run(code: &str) -> Option<Value> {
             String::from("=="),
             curry_2arg!(|a, b| { Some(Value::Bool(a == b)) }),
         ),
+        (
+            String::from(">"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Bool(a > b)),
+                    [Value::String(a), Value::String(b)] => Some(Value::Bool(a > b)),
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("<"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Number(a), Value::Number(b)] => Some(Value::Bool(a < b)),
+                    [Value::String(a), Value::String(b)] => Some(Value::Bool(a < b)),
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("&"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a & b)),
+                    _ => None,
+                }
+            }),
+        ),
+        (
+            String::from("|"),
+            curry_2arg!(|a, b| {
+                match [a, b] {
+                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a | b)),
+                    _ => None,
+                }
+            }),
+        ),
     ]);
     ast.eval(env)
 }
