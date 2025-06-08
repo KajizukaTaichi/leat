@@ -29,13 +29,16 @@ impl Expr {
         } else if tokens.len() >= 2 {
             if let Token::Ident(operator) = tokens.get(tokens.len() - 2)? {
                 if operator.chars().all(|c| c.is_ascii_punctuation()) {
-                    return Some(Expr::Call(
-                        Box::new(Expr::Call(
-                            Box::new(Expr::Variable(operator.to_owned())),
-                            Box::new(Expr::parse(tokens.get(..tokens.len() - 2)?.to_vec())?),
-                        )),
-                        Box::new(Expr::parse(vec![tokens.last()?.clone()])?),
-                    ));
+                    if let Some(lhs) = Expr::parse(tokens.get(..tokens.len() - 2)?.to_vec()) {
+                        let rhs = Expr::parse(vec![tokens.last()?.clone()])?;
+                        return Some(Expr::Call(
+                            Box::new(Expr::Call(
+                                Box::new(Expr::Variable(operator.to_owned())),
+                                Box::new(lhs),
+                            )),
+                            Box::new(rhs),
+                        ));
+                    }
                 }
             }
             let func = Expr::parse(tokens.get(..tokens.len() - 1)?.to_vec())?;
