@@ -23,7 +23,6 @@ fn main() {
                         Ok(res) => println!("{res}"),
                         Err(err) => println!("Error! {err}"),
                     }
-
                     buf.clear();
                 }
             }
