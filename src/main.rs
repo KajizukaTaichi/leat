@@ -133,7 +133,7 @@ fn run(code: &str) -> Option<Value> {
             }),
         ),
         (
-            String::from("cast"),
+            String::from("typeof"),
             Value::Lambda(Lambda::BuiltIn(
                 |a, _| match a {
                     Value::Number(_) => Some(Value::Type(Type::Number)),
