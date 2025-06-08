@@ -11,9 +11,9 @@ fn main() {
 }
 
 fn run() -> Option<()> {
-    let code = "a b c";
+    let code = "+ 1 3";
     let ast = Expr::parse(tokenize(code)?)?;
-    let env = IndexMap::from([(
+    let env = &mut IndexMap::from([(
         String::from("+"),
         Value::Lambda(Lambda::BuiltIn(
             |a, mut env| {
@@ -35,6 +35,7 @@ fn run() -> Option<()> {
             IndexMap::new(),
         )),
     )]);
+    dbg!(ast.eval(env));
     Some(())
 }
 
