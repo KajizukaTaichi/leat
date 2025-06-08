@@ -5,9 +5,11 @@ impl Expr {
         if let Token::Let = tokens.first()? {
             let tokens = tokens.get(1..)?;
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Assign).collect();
-            let [name, tokens] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
+            let name = tokens.first()?.to_vec();
+            let tokens = tokens.get(1..)?.join(&Token::Assign);
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::In).collect();
-            let [value, after_expr] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
+            let value = tokens.first()?.to_vec();
+            let after_expr = tokens.get(1..)?.join(&Token::In);
             let name = Box::new(Expr::parse(name)?);
             let value = Box::new(Expr::parse(value)?);
             let after_expr = Box::new(Expr::parse(after_expr)?);
@@ -15,9 +17,11 @@ impl Expr {
         } else if let Token::If = tokens.first()? {
             let tokens = tokens.get(1..)?;
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Then).collect();
-            let [cond, tokens] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
+            let cond = tokens.first()?.to_vec();
+            let tokens = tokens.get(1..)?.join(&Token::Then);
             let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Else).collect();
-            let [then, els] = [tokens.first()?.to_vec(), tokens.get(1..)?.concat()];
+            let then = tokens.first()?.to_vec();
+            let els = tokens.get(1..)?.join(&Token::Else);
             let cond = Box::new(Expr::parse(cond)?);
             let then = Box::new(Expr::parse(then)?);
             let els = Box::new(Expr::parse(els)?);
