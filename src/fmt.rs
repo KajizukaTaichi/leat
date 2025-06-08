@@ -1,5 +1,5 @@
 use crate::*;
-use stdlib::fmt::{Display, Formatter, Result};
+use std::fmt::{Display, Formatter, Result};
 
 impl Display for Expr {
     fn fmt(&self, f: &mut Formatter) -> Result {
