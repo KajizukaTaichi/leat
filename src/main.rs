@@ -15,7 +15,7 @@ fn main() {
         match rl.readline("> ") {
             Ok(code) => {
                 buf.push_str(&code);
-                if let Ok(Ok(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
+                if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     println!("{:?}", ast.eval(&mut env));
                 }
             }
@@ -153,20 +153,16 @@ fn stdlib() -> Env {
         ),
         (
             String::from("&"),
-            curry_2arg!(|a, b| {
-                match [a, b] {
-                    [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a & b)),
-                    _ => Err(LeatError::InvalidOperation),,
-                }
+            curry_2arg!(|a, b| match [a, b] {
+                [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a & b)),
+                _ => Err(LeatError::InvalidOperation),
             }),
         ),
         (
             String::from("|"),
-            curry_2arg!(|a, b| {
-                match [a, b] {
-                    [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a | b)),
-                    _ => Err(LeatError::InvalidOperation),,
-                }
+            curry_2arg!(|a, b| match [a, b] {
+                [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a | b)),
+                _ => Err(LeatError::InvalidOperation),
             }),
         ),
         (
@@ -183,7 +179,7 @@ fn stdlib() -> Env {
                             Err(LeatError::InvalidOperation)
                         }
                     }
-                    _ => Err(LeatError::InvalidOperation),,
+                    _ => Err(LeatError::InvalidOperation),
                 }
             }),
         ),
