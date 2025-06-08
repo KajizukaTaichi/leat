@@ -9,8 +9,8 @@ fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
         let add a b = + a b in
-        let c = add 3 4 in
-        c
+        let c = add 3 in
+        c 1
     "#));
 }
 
