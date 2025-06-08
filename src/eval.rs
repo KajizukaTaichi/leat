@@ -1,18 +1,24 @@
 use crate::*;
 
 impl Expr {
-    pub fn eval(&self, env: &mut Env) -> Option<Value> {
+    pub fn eval(&self, env: &mut Env) -> Result<Value, LeatError> {
         match self {
-            Expr::Variable(name) => env.get(name).cloned(),
+            Expr::Variable(name) => {
+                if let Some(value) = env.get(name) {
+                    Ok(value.to_owned())
+                } else {
+                    Err(LeatError::UndefinedName(name.to_string()))
+                }
+            }
             Expr::Literal(value) => match value {
-                Value::Lambda(Lambda::UserDefined(arg, body, _)) => Some(Value::Lambda(
+                Value::Lambda(Lambda::UserDefined(arg, body, _)) => Ok(Value::Lambda(
                     Lambda::UserDefined(arg.to_string(), body.clone(), env.clone()),
                 )),
-                _ => Some(value.to_owned()),
+                _ => Ok(value.to_owned()),
             },
             Expr::Call(func, arg) => {
                 let Value::Lambda(lambda) = func.eval(env)? else {
-                    return None;
+                    return Err(LeatError::CallNotLambda(*func.clone()));
                 };
                 match lambda {
                     Lambda::BuiltIn(body, func_env) => body(arg.eval(env)?, func_env),
@@ -31,13 +37,13 @@ impl Expr {
                 }
                 Expr::Call(name, arg) => {
                     let Expr::Variable(arg) = *arg else {
-                        return None;
+                        return Err(LeatError::InvalidArg(*arg));
                     };
                     let func = Lambda::UserDefined(arg, value.to_owned(), env.clone());
                     let func = Box::new(Expr::Literal(Value::Lambda(func)));
                     Expr::Let(name, func, after_expr.clone()).eval(env)
                 }
-                _ => None,
+                _ => Err(LeatError::InvalidBind(*name.clone())),
             },
             Expr::If(cond, then, els) => {
                 if let Value::Bool(true) = cond.eval(env)? {
@@ -48,4 +54,11 @@ impl Expr {
             }
         }
     }
+}
+
+pub enum LeatError {
+    UndefinedName(String),
+    InvalidBind(Expr),
+    InvalidArg(Expr),
+    CallNotLambda(Expr),
 }
