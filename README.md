@@ -3,7 +3,7 @@
 動的型付けかつインタプリタ型で安っぽいです
 
 ```ocaml
-let |> := \ a . (\ f . f a) in
+let |> := \ a . \ f . f a in
 let fact n :=
   if n == 0
     then 1
