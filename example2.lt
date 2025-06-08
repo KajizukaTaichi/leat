@@ -1,2 +1,0 @@
-let hoge f := f 1 in
-hoge (+) 2 + 3
