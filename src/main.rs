@@ -15,11 +15,8 @@ fn main() {
         match rl.readline("> ") {
             Ok(code) => {
                 buf.push_str(&code);
-                if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
-                    if let Some(result) = ast.eval(&mut env) {
-                        println!("{result:?}");
-                    }
-                    buf.clear();
+                if let Ok(Ok(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
+                    println!("{:?}", ast.eval(&mut env));
                 }
             }
             Err(ReadlineError::Interrupted) => {
@@ -66,14 +63,23 @@ pub enum Lambda {
     UserDefined(String, Box<Expr>, Env),
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum LeatError {
+    UndefinedName(String),
+    CallNotLambda(Expr),
+    InvalidBind(Expr),
+    InvalidArg(Expr),
+    InvalidOperation,
+}
+
 fn stdlib() -> Env {
     macro_rules! curry_2arg {
         ($processing: expr) => {
             Value::Lambda(Lambda::BuiltIn(
                 |a, mut env| {
-                    Some(Value::Lambda(Lambda::BuiltIn(
+                    Ok(Value::Lambda(Lambda::BuiltIn(
                         |b, env| {
-                            let a = env.get("a")?.clone();
+                            let a = env.get("a").unwrap().clone();
                             $processing(a, b)
                         },
                         {
@@ -91,9 +97,9 @@ fn stdlib() -> Env {
             String::from("+"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a + b)),
-                    [Value::String(a), Value::String(b)] => Some(Value::String(a + &b)),
-                    _ => None,
+                    [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a + b)),
+                    [Value::String(a), Value::String(b)] => Ok(Value::String(a + &b)),
+                    _ => Err(LeatError::InvalidOperation),
                 }
             }),
         ),
@@ -101,8 +107,8 @@ fn stdlib() -> Env {
             String::from("-"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a - b)),
-                    _ => None,
+                    [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a - b)),
+                    _ => Err(LeatError::InvalidOperation),
                 }
             }),
         ),
@@ -110,53 +116,47 @@ fn stdlib() -> Env {
             String::from("*"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a * b)),
-                    [Value::String(a), Value::Number(b)] => {
-                        Some(Value::String(a.repeat(b as usize)))
-                    }
-                    _ => None,
+                    [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a * b)),
+                    [Value::String(a), Value::Number(b)] => Ok(Value::String(a.repeat(b as usize))),
+                    _ => Err(LeatError::InvalidOperation),
                 }
             }),
         ),
         (
             String::from("/"),
-            curry_2arg!(|a, b| {
-                match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Number(a / b)),
-                    _ => None,
-                }
+            curry_2arg!(|a, b| match [a, b] {
+                [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a / b)),
+                _ => Err(LeatError::InvalidOperation),
             }),
         ),
         (
             String::from("=="),
-            curry_2arg!(|a, b| { Some(Value::Bool(a == b)) }),
+            curry_2arg!(|a, b| Ok(Value::Bool(a == b))),
         ),
         (
             String::from(">"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Bool(a > b)),
-                    [Value::String(a), Value::String(b)] => Some(Value::Bool(a > b)),
-                    _ => None,
+                    [Value::Number(a), Value::Number(b)] => Ok(Value::Bool(a > b)),
+                    [Value::String(a), Value::String(b)] => Ok(Value::Bool(a > b)),
+                    _ => Err(LeatError::InvalidOperation),
                 }
             }),
         ),
         (
             String::from("<"),
-            curry_2arg!(|a, b| {
-                match [a, b] {
-                    [Value::Number(a), Value::Number(b)] => Some(Value::Bool(a < b)),
-                    [Value::String(a), Value::String(b)] => Some(Value::Bool(a < b)),
-                    _ => None,
-                }
+            curry_2arg!(|a, b| match [a, b] {
+                [Value::Number(a), Value::Number(b)] => Ok(Value::Bool(a < b)),
+                [Value::String(a), Value::String(b)] => Ok(Value::Bool(a < b)),
+                _ => Err(LeatError::InvalidOperation),
             }),
         ),
         (
             String::from("&"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a & b)),
-                    _ => None,
+                    [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a & b)),
+                    _ => Err(LeatError::InvalidOperation),,
                 }
             }),
         ),
@@ -164,8 +164,8 @@ fn stdlib() -> Env {
             String::from("|"),
             curry_2arg!(|a, b| {
                 match [a, b] {
-                    [Value::Bool(a), Value::Bool(b)] => Some(Value::Bool(a | b)),
-                    _ => None,
+                    [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a | b)),
+                    _ => Err(LeatError::InvalidOperation),,
                 }
             }),
         ),
@@ -174,16 +174,16 @@ fn stdlib() -> Env {
             curry_2arg!(|a, b| {
                 match [a, b] {
                     [Value::Number(a), Value::Type(Type::String)] => {
-                        Some(Value::String(a.to_string()))
+                        Ok(Value::String(a.to_string()))
                     }
                     [Value::String(a), Value::Type(Type::Number)] => {
                         if let Ok(n) = a.parse::<f64>() {
-                            Some(Value::Number(n))
+                            Ok(Value::Number(n))
                         } else {
-                            None
+                            Err(LeatError::InvalidOperation)
                         }
                     }
-                    _ => None,
+                    _ => Err(LeatError::InvalidOperation),,
                 }
             }),
         ),
@@ -191,11 +191,11 @@ fn stdlib() -> Env {
             String::from("typeof"),
             Value::Lambda(Lambda::BuiltIn(
                 |a, _| match a {
-                    Value::Number(_) => Some(Value::Type(Type::Number)),
-                    Value::String(_) => Some(Value::Type(Type::String)),
-                    Value::Bool(_) => Some(Value::Type(Type::Bool)),
-                    Value::Lambda(_) => Some(Value::Type(Type::Lambda)),
-                    Value::Type(_) => Some(Value::Type(Type::Kind)),
+                    Value::Number(_) => Ok(Value::Type(Type::Number)),
+                    Value::String(_) => Ok(Value::Type(Type::String)),
+                    Value::Bool(_) => Ok(Value::Type(Type::Bool)),
+                    Value::Lambda(_) => Ok(Value::Type(Type::Lambda)),
+                    Value::Type(_) => Ok(Value::Type(Type::Kind)),
                 },
                 IndexMap::new(),
             )),
