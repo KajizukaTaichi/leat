@@ -20,13 +20,15 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                 in_quote = !in_quote;
                 current_token.push(c);
             }
-            '\\' if in_parentheses == 0 => {
+            '\\' if in_parentheses == 0 && current_token.is_empty() => {
                 tokens.push(Token::Lambda);
             }
             '.' if in_parentheses == 0 => {
-                tokens.push(Token::new(current_token.clone())?);
+                if !current_token.is_empty() {
+                    tokens.push(Token::new(current_token.clone())?);
+                    current_token.clear();
+                }
                 tokens.push(Token::Dot);
-                current_token.clear();
             }
             other => {
                 if other.is_whitespace() && !in_quote {
