@@ -7,13 +7,11 @@ pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
-    run().unwrap();
+    run(r#"let b = + 1 in b 2"#).unwrap();
 }
 
-fn run() -> Option<()> {
-    let code = r#"let b = + 1 in b 2"#;
+fn run(code: &str) -> Option<()> {
     let ast = Expr::parse(tokenize(code)?)?;
-
     macro_rules! curry_2arg {
         ($processing: expr) => {
             Value::Lambda(Lambda::BuiltIn(
