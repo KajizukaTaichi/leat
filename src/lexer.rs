@@ -80,6 +80,14 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                 in_quote = !in_quote;
                 current_token.push(c);
             }
+            '\\' => {
+                tokens.push(Token::Lambda);
+            }
+            '.' => {
+                tokens.push(Token::new(current_token.clone())?);
+                tokens.push(Token::Dot);
+                current_token.clear();
+            }
             other => {
                 if other.is_whitespace() && !in_quote {
                     if in_parentheses != 0 {
