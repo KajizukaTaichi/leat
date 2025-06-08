@@ -1,3 +1,5 @@
+use crate::*;
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Number(f64),
@@ -5,6 +7,7 @@ pub enum Token {
     Bool(bool),
     Ident(String),
     Nest(Vec<Token>),
+    Type(Type),
     Let,
     Assign,
     In,
@@ -27,6 +30,16 @@ impl Token {
             Token::Then
         } else if token == "else" {
             Token::Else
+        } else if token == "number" {
+            Token::Type(Type::Number)
+        } else if token == "string" {
+            Token::Type(Type::String)
+        } else if token == "bool" {
+            Token::Type(Type::Bool)
+        } else if token == "lambda" {
+            Token::Type(Type::Lambda)
+        } else if token == "kind" {
+            Token::Type(Type::Kind)
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
         } else if let Ok(n) = token.parse::<f64>() {
