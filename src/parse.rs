@@ -27,6 +27,17 @@ impl Expr {
             let els = Box::new(Expr::parse(els)?);
             Some(Expr::If(cond, then, els))
         } else if tokens.len() >= 2 {
+            if let Token::Ident(operator) = tokens.get(tokens.len() - 2)? {
+                if operator.chars().all(|c| c.is_ascii_punctuation()) {
+                    return Some(Expr::Call(
+                        Box::new(Expr::Call(
+                            Box::new(Expr::Variable(operator.to_owned())),
+                            Box::new(Expr::parse(tokens.get(..tokens.len() - 2)?.to_vec())?),
+                        )),
+                        Box::new(Expr::parse(vec![tokens.last()?.clone()])?),
+                    ));
+                }
+            }
             let func = Expr::parse(tokens.get(..tokens.len() - 1)?.to_vec())?;
             let args = Expr::parse(vec![tokens.last()?.clone()])?;
             Some(Expr::Call(Box::new(func), Box::new(args)))
