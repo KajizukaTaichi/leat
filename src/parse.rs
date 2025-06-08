@@ -36,6 +36,7 @@ impl Expr {
                 Token::String(b) => Some(Expr::Literal(Value::String(b.to_owned()))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
                 Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
+                Token::Nest(tokens) => Some(Expr::parse(tokens.to_vec())?),
                 _ => None,
             }
         }
