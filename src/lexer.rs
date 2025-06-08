@@ -5,6 +5,7 @@ pub enum Token {
     Ident(String),
     Let,
     Assign,
+    In,
     If,
     Then,
     Else,
@@ -21,8 +22,10 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
         ($token: expr) => {
             if $token == "let" {
                 Token::Let
-            } else if $token == "<-" {
+            } else if $token == "=" {
                 Token::Assign
+            } else if $token == "in" {
+                Token::In
             } else if $token == "if" {
                 Token::If
             } else if $token == "then" {
