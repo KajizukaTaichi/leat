@@ -3,6 +3,9 @@ use crate::*;
 impl Expr {
     pub fn eval(&self, env: &mut Env) -> Option<Value> {
         match self {
+            Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, _))) => Some(Value::Lambda(
+                Lambda::UserDefined(arg.to_string(), body.clone(), env.clone()),
+            )),
             Expr::Literal(value) => Some(value.to_owned()),
             Expr::Variable(name) => env.get(name).cloned(),
             Expr::Call(func, arg) => {
