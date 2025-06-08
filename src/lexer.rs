@@ -44,7 +44,7 @@ impl Token {
             Token::Type(Type::Kind)
         } else if token == "\\" {
             Token::Lambda
-        } else if token == "->" {
+        } else if token == "." {
             Token::Dot
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
