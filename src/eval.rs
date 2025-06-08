@@ -7,7 +7,7 @@ impl Expr {
                 if let Some(value) = env.get(name) {
                     Ok(value.to_owned())
                 } else {
-                    Err(LeatError::UndefinedName(name.to_string()))
+                    Err(LeatError::Undefined(name.to_string()))
                 }
             }
             Expr::Literal(value) => match value {
@@ -18,7 +18,7 @@ impl Expr {
             },
             Expr::Call(func, arg) => {
                 let Value::Lambda(lambda) = func.eval(env)? else {
-                    return Err(LeatError::CallNotLambda(*func.clone()));
+                    return Err(LeatError::NonLambda(*func.clone()));
                 };
                 match lambda {
                     Lambda::BuiltIn(body, func_env) => body(arg.eval(env)?, func_env),
