@@ -8,6 +8,8 @@ pub enum Token {
     Ident(String),
     Nest(Vec<Token>),
     Type(Type),
+    Lambda,
+    Dot,
     Let,
     Assign,
     In,
@@ -20,7 +22,7 @@ impl Token {
     fn new(token: String) -> Option<Token> {
         Some(if token == "let" {
             Token::Let
-        } else if token == "=" {
+        } else if token == ":=" {
             Token::Assign
         } else if token == "in" {
             Token::In
@@ -30,16 +32,20 @@ impl Token {
             Token::Then
         } else if token == "else" {
             Token::Else
-        } else if token == "number" {
+        } else if token == "#number" {
             Token::Type(Type::Number)
-        } else if token == "string" {
+        } else if token == "#string" {
             Token::Type(Type::String)
-        } else if token == "bool" {
+        } else if token == "#bool" {
             Token::Type(Type::Bool)
-        } else if token == "lambda" {
+        } else if token == "#lambda" {
             Token::Type(Type::Lambda)
-        } else if token == "kind" {
+        } else if token == "#kind" {
             Token::Type(Type::Kind)
+        } else if token == "λ" {
+            Token::Lambda
+        } else if token == "." {
+            Token::Dot
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
         } else if let Ok(n) = token.parse::<f64>() {
