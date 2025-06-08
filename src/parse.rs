@@ -20,6 +20,10 @@ impl Expr {
             let then = Box::new(Expr::parse(then)?);
             let els = Box::new(Expr::parse(els)?);
             Some(Expr::If(cond, then, els))
+        } else if tokens.len() >= 2 {
+            let func = Expr::parse(vec![tokens.get(tokens.len() - 2)?.clone()])?;
+            let args = Expr::parse(vec![tokens.last()?.clone()])?;
+            Some(Expr::Call(Box::new(func), Box::new(args)))
         } else {
             match tokens.first()? {
                 Token::Number(b) => Some(Expr::Literal(Value::Number(*b))),
