@@ -15,10 +15,12 @@ fn main() {
         match rl.readline("> ") {
             Ok(code) => {
                 buf.push_str(&code);
+                buf.push_str("\n");
+                rl.add_history_entry(code).unwrap();
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     println!("{:?}", ast.eval(&mut env));
+                    buf.clear();
                 }
-                buf.clear();
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
