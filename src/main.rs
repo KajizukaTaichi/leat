@@ -2,6 +2,7 @@ mod eval;
 mod lexer;
 
 use indexmap::IndexMap;
+pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
