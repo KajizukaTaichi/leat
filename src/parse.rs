@@ -21,7 +21,7 @@ impl Expr {
             let els = Box::new(Expr::parse(els)?);
             Some(Expr::If(cond, then, els))
         } else if tokens.len() >= 2 {
-            let func = Expr::parse(vec![tokens.get(tokens.len() - 2)?.clone()])?;
+            let func = Expr::parse(tokens.get(..tokens.len() - 1)?.to_vec())?;
             let args = Expr::parse(vec![tokens.last()?.clone()])?;
             Some(Expr::Call(Box::new(func), Box::new(args)))
         } else {
@@ -29,6 +29,7 @@ impl Expr {
                 Token::Number(b) => Some(Expr::Literal(Value::Number(*b))),
                 Token::String(b) => Some(Expr::Literal(Value::String(b.to_owned()))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
+                Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
                 _ => None,
             }
         }
