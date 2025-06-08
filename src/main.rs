@@ -142,7 +142,7 @@ pub enum Type {
     String,
     Bool,
     Lambda,
-    Type,
+    Kind,
 }
 
 type Env = IndexMap<String, Value>;
