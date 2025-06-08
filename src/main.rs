@@ -11,7 +11,7 @@ fn main() {
 }
 
 fn run() -> Option<()> {
-    let code = "let a = if flag then a else b 1 in a";
+    let code = "a (b c)";
     dbg!(Expr::parse(tokenize(code)?));
     Some(())
 }
