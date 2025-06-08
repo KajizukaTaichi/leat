@@ -21,7 +21,12 @@ impl Expr {
             let els = Box::new(Expr::parse(els)?);
             Some(Expr::If(cond, then, els))
         } else {
-            None
+            match tokens.first()? {
+                Token::Number(b) => Some(Expr::Literal(Value::Number(*b))),
+                Token::String(b) => Some(Expr::Literal(Value::String(b.to_owned()))),
+                Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
+                _ => None,
+            }
         }
     }
 }
