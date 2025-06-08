@@ -13,14 +13,8 @@ pub enum Token {
     Else,
 }
 
-pub fn tokenize(input: &str) -> Option<Vec<Token>> {
-    let mut tokens: Vec<Token> = Vec::new();
-    let mut current_token = String::new();
-    let mut in_parentheses: usize = 0;
-    let mut in_quote = false;
-    let mut is_escape = false;
-
-    fn token(token: String) -> Option<Token> {
+impl Token {
+    fn new(token: String) -> Option<Token> {
         Some(if token == "let" {
             Token::Let
         } else if token == "=" {
@@ -40,11 +34,19 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
         } else if let Some(Some(string)) = token.strip_prefix("\"").map(|x| x.strip_suffix("\"")) {
             Token::String(string.to_string())
         } else if let Some(Some(nest)) = token.strip_prefix("(").map(|x| x.strip_suffix(")")) {
-            Token::Nest(tokenize(nest)?)
+            Token::Nest(lex(nest)?)
         } else {
             Token::Ident(token)
         })
     }
+}
+
+pub fn lex(input: &str) -> Option<Vec<Token>> {
+    let mut tokens: Vec<Token> = Vec::new();
+    let mut current_token = String::new();
+    let mut in_parentheses: usize = 0;
+    let mut in_quote = false;
+    let mut is_escape = false;
 
     for c in input.chars() {
         if is_escape {
@@ -78,7 +80,7 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
                         if in_parentheses != 0 {
                             current_token.push(c);
                         } else if !current_token.is_empty() {
-                            tokens.push(token(current_token.clone())?);
+                            tokens.push(Token::new(current_token.clone())?);
                             current_token.clear();
                         }
                     } else {
@@ -94,7 +96,7 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
         return None;
     }
     if !current_token.is_empty() {
-        tokens.push(token(current_token.clone())?);
+        tokens.push(Token::new(current_token.clone())?);
         current_token.clear();
     }
 
