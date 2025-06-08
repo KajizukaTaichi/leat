@@ -4,6 +4,7 @@ pub enum Token {
     String(String),
     Bool(bool),
     Ident(String),
+    Nest(Vec<Token>),
     Let,
     Assign,
     In,
@@ -19,8 +20,8 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
     let mut in_quote = false;
     let mut is_escape = false;
 
-    fn token(token: String) -> Token {
-        if token == "let" {
+    fn token(token: String) -> Option<Token> {
+        Some(if token == "let" {
             Token::Let
         } else if token == "=" {
             Token::Assign
@@ -36,11 +37,13 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
             Token::Bool(b)
         } else if let Ok(n) = token.parse::<f64>() {
             Token::Number(n)
-        } else if let Some(Some(string)) = token.strip_prefix("\"").map(|x| x.strip_prefix("\"")) {
+        } else if let Some(Some(string)) = token.strip_prefix("\"").map(|x| x.strip_suffix("\"")) {
             Token::String(string.to_string())
+        } else if let Some(Some(nest)) = token.strip_prefix("(").map(|x| x.strip_suffix(")")) {
+            Token::Nest(tokenize(nest)?)
         } else {
             Token::Ident(token)
-        }
+        })
     }
 
     for c in input.chars() {
@@ -75,7 +78,7 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
                         if in_parentheses != 0 {
                             current_token.push(c);
                         } else if !current_token.is_empty() {
-                            tokens.push(token(current_token.clone()));
+                            tokens.push(token(current_token.clone())?);
                             current_token.clear();
                         }
                     } else {
@@ -91,7 +94,7 @@ pub fn tokenize(input: &str) -> Option<Vec<Token>> {
         return None;
     }
     if !current_token.is_empty() {
-        tokens.push(token(current_token.clone()));
+        tokens.push(token(current_token.clone())?);
         current_token.clear();
     }
 
