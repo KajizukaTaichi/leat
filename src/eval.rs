@@ -3,11 +3,13 @@ use crate::*;
 impl Expr {
     pub fn eval(&self, env: &mut Env) -> Option<Value> {
         match self {
-            Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, _))) => Some(Value::Lambda(
-                Lambda::UserDefined(arg.to_string(), body.clone(), env.clone()),
-            )),
-            Expr::Literal(value) => Some(value.to_owned()),
             Expr::Variable(name) => env.get(name).cloned(),
+            Expr::Literal(value) => match value {
+                Value::Lambda(Lambda::UserDefined(arg, body, _)) => Some(Value::Lambda(
+                    Lambda::UserDefined(arg.to_string(), body.clone(), env.clone()),
+                )),
+                _ => Some(value.to_owned()),
+            },
             Expr::Call(func, arg) => {
                 let Value::Lambda(lambda) = func.eval(env)? else {
                     return None;
@@ -15,6 +17,7 @@ impl Expr {
                 match lambda {
                     Lambda::BuiltIn(body, func_env) => body(arg.eval(env)?, func_env),
                     Lambda::UserDefined(arg_name, body, mut func_env) => {
+                        func_env.extend(env.clone());
                         func_env.insert(arg_name, arg.eval(env)?);
                         body.eval(&mut func_env)
                     }
