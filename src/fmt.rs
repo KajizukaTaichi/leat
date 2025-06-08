@@ -1,5 +1,5 @@
 use crate::*;
-use std::fmt::{Display, Formatter, Result};
+use stdlib::fmt::{Display, Formatter, Result};
 
 impl Display for Expr {
     fn fmt(&self, f: &mut Formatter) -> Result {
@@ -19,8 +19,8 @@ impl Display for Value {
             Value::Number(n) => write!(f, "{n}"),
             Value::String(s) => write!(f, "\"{s}\""),
             Value::Bool(b) => write!(f, "{b}"),
-            Value::Lambda(Lambda::UserDefined(arg, body, _)) => write!(f, "\\{arg}. {body}"),
-            Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "\\x.{func:?}"),
+            Value::Lambda(Lambda::UserDefined(arg, body, _)) => write!(f, "(\\{arg}. {body})"),
+            Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "(\\x. {func:?})"),
             Value::Type(typ) => write!(f, "{}", format!("{typ:?}").to_lowercase()),
         }
     }
