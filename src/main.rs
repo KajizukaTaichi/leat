@@ -7,15 +7,7 @@ pub use lexer::*;
 
 fn main() {
     println!("Hello, world!");
-    dbg!(run(r#"
-        let dec = + -1 in
-        let fact n =
-            if == n 0
-                then 1
-                else * n (fact (dec n))
-        in
-        fact 6
-    "#));
+    dbg!(run(include_str!("../example.lt")));
 }
 
 fn run(code: &str) -> Option<Value> {
