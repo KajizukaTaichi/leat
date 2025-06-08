@@ -8,8 +8,9 @@ pub use lexer::*;
 fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
-        let fact n = if == n 0 then 1 else * n (fact (- n 1)) in
-        let inc = + 1 in fact (inc 5)
+        let dec n = - n 1 in
+        let fact n = if == n 0 then 1 else * n (fact (dec n)) in
+        fact 6
     "#));
 }
 
