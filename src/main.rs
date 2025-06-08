@@ -14,7 +14,7 @@ fn main() {
 }
 
 fn run(code: &str) -> Option<Value> {
-    let ast = Expr::parse(tokenize(code)?)?;
+    let ast = Expr::parse(lex(code)?)?;
     macro_rules! curry_2arg {
         ($processing: expr) => {
             Value::Lambda(Lambda::BuiltIn(
