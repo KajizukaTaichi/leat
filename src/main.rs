@@ -31,7 +31,6 @@ fn run(code: &str) -> Option<Value> {
             ))
         };
     }
-
     let env = &mut IndexMap::from([
         (
             String::from("+"),
@@ -134,6 +133,16 @@ pub enum Value {
     String(String),
     Bool(bool),
     Lambda(Lambda),
+    Type(Type),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Type {
+    Number,
+    String,
+    Bool,
+    Lambda,
+    Type,
 }
 
 type Env = IndexMap<String, Value>;
