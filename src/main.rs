@@ -9,7 +9,8 @@ fn main() {
     println!("Hello, world!");
     dbg!(run(r#"
         let inc n = + n 1 in
-        inc (inc 5)
+        let dec n = - n 1 in
+        inc (dec (dec 5))
     "#));
 }
 
