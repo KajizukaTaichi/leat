@@ -3,10 +3,11 @@ mod fmt;
 mod lexer;
 mod parse;
 mod stdlib;
+mod token;
 
 use indexmap::IndexMap;
 use rustyline::{DefaultEditor, error::ReadlineError};
-pub use {lexer::*, stdlib::stdlib};
+pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
     println!("Hello, world!");
