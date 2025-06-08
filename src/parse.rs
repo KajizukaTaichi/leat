@@ -46,9 +46,10 @@ impl Expr {
             Some(Expr::Call(Box::new(func), Box::new(args)))
         } else {
             match tokens.first()? {
-                Token::Number(b) => Some(Expr::Literal(Value::Number(*b))),
-                Token::String(b) => Some(Expr::Literal(Value::String(b.to_owned()))),
+                Token::Number(n) => Some(Expr::Literal(Value::Number(*n))),
+                Token::String(s) => Some(Expr::Literal(Value::String(s.to_owned()))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
+                Token::Type(t) => Some(Expr::Literal(Value::Type(t.clone()))),
                 Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
                 Token::Nest(tokens) => Some(Expr::parse(tokens.to_vec())?),
                 _ => None,
