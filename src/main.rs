@@ -42,6 +42,7 @@ fn main() {
 pub enum Expr {
     If(Box<Expr>, Box<Expr>, Box<Expr>),
     Let(Box<Expr>, Box<Expr>, Box<Expr>),
+    Try(Box<Expr>, Box<Expr>),
     Call(Box<Expr>, Box<Expr>),
     Array(Vec<Expr>),
     Variable(String),
