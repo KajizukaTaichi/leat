@@ -261,22 +261,6 @@ pub fn stdlib() -> Env {
             )),
         ),
         (
-            String::from("eval"),
-            Value::Lambda(Lambda::BuiltIn(
-                |func, _| {
-                    let Value::Lambda(Lambda::UserDefined(arg, body, mut env)) = func else {
-                        return Err(LeatError::TypeMismatch(Type::Lambda));
-                    };
-                    Ok(Value::Lambda(Lambda::UserDefined(
-                        arg,
-                        Box::new(body.reduct(&mut env)?),
-                        env,
-                    )))
-                },
-                IndexMap::new(),
-            )),
-        ),
-        (
             String::from("ast-replace"),
             Value::Lambda(Lambda::BuiltIn(
                 |expr, mut env| {
