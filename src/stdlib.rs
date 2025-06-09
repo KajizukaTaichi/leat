@@ -133,6 +133,30 @@ pub fn stdlib() -> Env {
             )),
         ),
         (
+            String::from("car"),
+            Value::Lambda(Lambda::BuiltIn(
+                |array, _| {
+                    let Value::Array(array) = array else {
+                        return Err(LeatError::InvalidOperation);
+                    };
+                    Ok(ok!(array.first())?.clone())
+                },
+                IndexMap::new(),
+            )),
+        ),
+        (
+            String::from("cdr"),
+            Value::Lambda(Lambda::BuiltIn(
+                |array, _| {
+                    let Value::Array(array) = array else {
+                        return Err(LeatError::InvalidOperation);
+                    };
+                    Ok(Value::Array(ok!(array.get(1..))?.to_vec()))
+                },
+                IndexMap::new(),
+            )),
+        ),
+        (
             String::from("~"),
             curry_2arg!(|a, b, _| {
                 let Value::Number(a) = a else {
