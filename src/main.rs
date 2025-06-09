@@ -80,6 +80,7 @@ pub enum Lambda {
 #[derive(Clone, Debug, PartialEq)]
 pub enum LeatError {
     Undefined(String),
+    CantReassign(String),
     NonLambda(Expr),
     InvalidBind(Expr),
     InvalidArg(Expr),
