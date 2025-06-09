@@ -137,6 +137,28 @@ pub fn stdlib() -> Env {
             }),
         ),
         (
+            String::from("filter"),
+            curry_2arg!(|func: Value, array, env: &mut Env| {
+                let Value::Array(array) = array else {
+                    return Err(LeatError::InvalidOperation);
+                };
+                Ok(Value::Array(
+                    array
+                        .iter()
+                        .cloned()
+                        .filter(|value| {
+                            Expr::Call(
+                                Box::new(Expr::Literal(func.clone())),
+                                Box::new(Expr::Literal(value.clone())),
+                            )
+                            .eval(env)
+                                == Ok(Value::Bool(true))
+                        })
+                        .collect::<Vec<Value>>(),
+                ))
+            }),
+        ),
+        (
             String::from("ast-replace"),
             Value::Lambda(Lambda::BuiltIn(
                 |expr, mut env| {
