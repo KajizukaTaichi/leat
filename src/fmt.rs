@@ -63,6 +63,7 @@ impl Display for LeatError {
             LeatError::InvalidArg(name) => write!(f, "invalid argument's name `{name}` for lambda"),
             LeatError::InvalidBind(expr) => write!(f, "invalid bind `{expr}` using let expression"),
             LeatError::InvalidOperation => write!(f, "invalid operation, not allowed in Leat"),
+            LeatError::UserDefined(msg) => write!(f, "{msg}"),
         }
     }
 }
