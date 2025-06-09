@@ -62,6 +62,13 @@ pub fn stdlib() -> Env {
             }),
         ),
         (
+            String::from("%"),
+            curry_2arg!(|a, b, _| match [a, b] {
+                [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a % b)),
+                _ => Err(LeatError::InvalidOperation),
+            }),
+        ),
+        (
             String::from("=="),
             curry_2arg!(|a, b, _| Ok(Value::Bool(a == b))),
         ),
