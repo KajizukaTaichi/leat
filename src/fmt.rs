@@ -16,6 +16,7 @@ impl Display for Expr {
             }
             Expr::Let(name, value, expr) => write!(f, "(let {name} := {value} in {expr})"),
             Expr::If(cond, then, els) => write!(f, "(if {cond} then {then} else {els})"),
+            Expr::Try(risky, callback) => write!(f, "(try {risky} catch {callback})"),
             Expr::Variable(name) => write!(f, "{name}"),
         }
     }
