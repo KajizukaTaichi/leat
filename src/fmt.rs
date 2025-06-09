@@ -23,9 +23,11 @@ impl Display for Value {
                 write!(f, "(\\{arg}. {})", {
                     let mut body = body.clone();
                     for (key, val) in env {
-                        let key = &Expr::Variable(key.to_owned());
-                        let val = &Expr::Literal(val.clone());
-                        *body = body.replace(key, val);
+                        if !matches!(val, Value::Lambda(Lambda::BuiltIn(_, _))) {
+                            let key = &Expr::Variable(key.to_owned());
+                            let val = &Expr::Literal(val.clone());
+                            *body = body.replace(key, val);
+                        }
                     }
                     body
                 })
