@@ -20,6 +20,15 @@ pub fn stdlib() -> Env {
             ))
         };
     }
+    macro_rules! ok {
+        ($value: expr) => {{
+            if let Some(result) = $value {
+                Ok(result)
+            } else {
+                Err(LeatError::InvalidOperation)
+            }
+        }};
+    }
     IndexMap::from([
         (
             String::from("+"),
@@ -156,6 +165,26 @@ pub fn stdlib() -> Env {
                         })
                         .collect::<Vec<Value>>(),
                 ))
+            }),
+        ),
+        (
+            String::from("reduce"),
+            curry_2arg!(|func: Value, array, env: &mut Env| {
+                let Value::Array(array) = array else {
+                    return Err(LeatError::InvalidOperation);
+                };
+                let mut result = ok!(array.first())?.clone();
+                for value in ok!(array.get(1..))? {
+                    result = Expr::Call(
+                        Box::new(Expr::Call(
+                            Box::new(Expr::Literal(func.clone())),
+                            Box::new(Expr::Literal(result.clone())),
+                        )),
+                        Box::new(Expr::Literal(value.clone())),
+                    )
+                    .eval(env)?;
+                }
+                Ok(result)
             }),
         ),
         (
