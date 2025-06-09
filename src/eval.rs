@@ -29,10 +29,9 @@ impl Expr {
                 match lambda {
                     Lambda::BuiltIn(body, mut func_env) => {
                         func_env.extend(env.clone());
-                        body(arg.eval(env)?, env.clone())
+                        body(arg.eval(env)?, func_env.clone())
                     }
                     Lambda::UserDefined(arg_name, body, mut func_env) => {
-                        dbg!(&env);
                         func_env.extend(env.clone());
                         func_env.insert(arg_name, arg.eval(env)?);
                         body.eval(&mut func_env)
