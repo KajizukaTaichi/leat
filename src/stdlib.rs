@@ -126,6 +126,22 @@ pub fn stdlib() -> Env {
             )),
         ),
         (
+            String::from("range"),
+            curry_2arg!(|a, b, _| {
+                let Value::Number(a) = a else {
+                    return Err(LeatError::InvalidOperation);
+                };
+                let Value::Number(b) = b else {
+                    return Err(LeatError::InvalidOperation);
+                };
+                let mut result = vec![];
+                for i in a as usize..b as usize {
+                    result.push(Value::Number(i as f64));
+                }
+                Ok(Value::Array(result))
+            }),
+        ),
+        (
             String::from("map"),
             curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
