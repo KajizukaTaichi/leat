@@ -31,7 +31,7 @@ impl Expr {
             }
             Expr::Let(name, value, after_expr) => match *name.clone() {
                 Expr::Variable(name) => {
-                    let value = value.eval(env)?;
+                    let value = value.eval(&mut env.clone())?;
                     env.insert(name.to_owned(), value);
                     after_expr.eval(env)
                 }
