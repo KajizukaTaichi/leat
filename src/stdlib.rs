@@ -6,9 +6,9 @@ pub fn stdlib() -> Env {
             Value::Lambda(Lambda::BuiltIn(
                 |a, mut env| {
                     Ok(Value::Lambda(Lambda::BuiltIn(
-                        |b, env| {
+                        |b, mut env| {
                             let a = env.get("a").unwrap().clone();
-                            $processing(a, b, env)
+                            $processing(a, b, &mut env)
                         },
                         {
                             env.insert(String::from("a"), a);
@@ -118,7 +118,7 @@ pub fn stdlib() -> Env {
         ),
         (
             String::from("map"),
-            curry_2arg!(|array, array, env| {
+            curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
                     return Err(LeatError::InvalidOperation);
                 };
@@ -127,14 +127,14 @@ pub fn stdlib() -> Env {
                         .iter()
                         .map(|value| {
                             Expr::Call(
-                                Box::new(Expr::Literal(func)),
-                                Box::new(Expr::Literal(value)),
+                                Box::new(Expr::Literal(func.clone())),
+                                Box::new(Expr::Literal(value.clone())),
                             )
                             .eval(env)
                         })
                         .collect::<Result<Vec<Value>, LeatError>>()?,
                 ))
-            },),
+            }),
         ),
         (
             String::from("ast-replace"),
