@@ -7,10 +7,9 @@ pub enum Token {
     Bool(bool),
     Ident(String),
     Nest(Vec<Token>),
+    Array(Vec<Token>),
     Type(Type),
     Lambda,
-    LeftBracket,
-    RightBracket,
     Dot,
     Comma,
     Let,
@@ -51,10 +50,6 @@ impl Token {
             Token::Dot
         } else if token == "," {
             Token::Comma
-        } else if token == "[" {
-            Token::LeftBracket
-        } else if token == "]" {
-            Token::RightBracket
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
         } else if let Ok(n) = token.parse::<f64>() {
@@ -63,6 +58,8 @@ impl Token {
             Token::String(string.to_string())
         } else if let Some(Some(nest)) = token.strip_prefix("(").map(|x| x.strip_suffix(")")) {
             Token::Nest(lex(nest)?)
+        } else if let Some(Some(nest)) = token.strip_prefix("[").map(|x| x.strip_suffix("]")) {
+            Token::Array(lex(nest)?)
         } else {
             Token::Ident(token)
         })
