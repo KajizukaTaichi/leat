@@ -6,8 +6,8 @@ impl Display for Expr {
         match self {
             Expr::Literal(value) => write!(f, "{value}"),
             Expr::Call(func, arg) => write!(f, "({func} {arg})"),
-            Expr::Let(name, value, expr) => write!(f, "let {name} := {value} in {expr}"),
-            Expr::If(cond, then, els) => write!(f, "if {cond} then {then} else {els}"),
+            Expr::Let(name, value, expr) => write!(f, "(let {name} := {value} in {expr})"),
+            Expr::If(cond, then, els) => write!(f, "(if {cond} then {then} else {els})"),
             Expr::Variable(name) => write!(f, "{name}"),
         }
     }
