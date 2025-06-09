@@ -22,9 +22,7 @@ impl Expr {
                     Box::new(els.replace(from, to)),
                 ),
                 Expr::Variable(name) => Expr::Variable(name.to_owned()),
-                Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, env)))
-                    if &Expr::Variable(arg.to_owned()) != from =>
-                {
+                Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, env))) => {
                     Expr::Literal(Value::Lambda(Lambda::UserDefined(
                         arg.to_string(),
                         Box::new(body.replace(from, to)),
