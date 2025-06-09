@@ -16,6 +16,12 @@ impl Expr {
                 )),
                 _ => Ok(value.to_owned()),
             },
+            Expr::Array(array) => Ok(Value::Array(
+                array
+                    .iter()
+                    .map(|x| x.eval(env))
+                    .collect::<Result<Vec<_>, LeatError>>()?,
+            )),
             Expr::Call(func, arg) => {
                 let Value::Lambda(lambda) = func.eval(env)? else {
                     return Err(LeatError::NonLambda(*func.clone()));
