@@ -1,6 +1,6 @@
 let church n :=
-    if n == 1 then (\f.\x. x)
+    if n == 0 then (\f.\x. x)
     else ast-replace (church (n - 1)) (\x. x) (\x. f x)
 in
-let to_num n := n (\x. x + 1) 1 in
-church 5
+let to_num n := n (\x. x + 1) 0 in
+to_num (church 5)
