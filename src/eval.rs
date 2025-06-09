@@ -44,7 +44,9 @@ impl Expr {
             Expr::Let(name, value, after_expr) => match *name.clone() {
                 Expr::Variable(name) => {
                     let value = value.eval(&mut env.clone())?;
-                    if env.contains_key(&name) {}
+                    if env.contains_key(&name) {
+                        return Err(LeatError::CantReassign(name));
+                    }
                     env.insert(name.to_owned(), value);
                     after_expr.eval(env)
                 }
