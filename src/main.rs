@@ -16,8 +16,9 @@ fn main() {
     let mut rl = DefaultEditor::new().unwrap();
     let mut buf = String::new();
     let mut env = stdlib();
+    let mut line = 0;
     loop {
-        match rl.readline("> ") {
+        match rl.readline(&format!("[{line:0<3}]: ")) {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
@@ -29,9 +30,11 @@ fn main() {
                     }
                     buf.clear();
                 }
+                line += 1
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
+                line += 0;
                 println!("{}", "[Code buffer is cleared]".underline());
             }
             Err(ReadlineError::Eof) => {
