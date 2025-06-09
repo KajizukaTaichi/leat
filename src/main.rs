@@ -64,6 +64,7 @@ pub enum Type {
     String,
     Bool,
     Lambda,
+    Array,
     Kind,
 }
 
