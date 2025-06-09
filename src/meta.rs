@@ -1,7 +1,7 @@
 use crate::*;
 
 impl Expr {
-    /// Beta reduction of constant arguments when apply Function
+    /// replace AST(abstract syntax tree) node in meta programming
     pub fn replace(&self, from: &Expr, to: &Expr) -> Expr {
         if from == self {
             to.clone()
