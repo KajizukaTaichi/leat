@@ -59,6 +59,7 @@ impl Display for LeatError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         match self {
             LeatError::Undefined(name) => write!(f, "can't refer undefined variable name `{name}`"),
+            LeatError::CantReassign(name) => write!(f, "can't reassign variable `{name}` again"),
             LeatError::NonLambda(expr) => write!(f, "can't apply non-lambda value `{expr}`"),
             LeatError::InvalidArg(name) => write!(f, "invalid argument's name `{name}` for lambda"),
             LeatError::InvalidBind(expr) => write!(f, "invalid bind `{expr}` using let expression"),
