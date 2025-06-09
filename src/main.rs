@@ -29,12 +29,14 @@ fn main() {
                         Err(err) => println!("{} {err}", "Error!".red()),
                     }
                     buf.clear();
+                    line = 0
+                } else {
+                    line += 1
                 }
-                line += 1
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
-                line += 0;
+                line = 0;
                 println!("{}", "Code buffer is cleared".underline());
             }
             Err(ReadlineError::Eof) => {
