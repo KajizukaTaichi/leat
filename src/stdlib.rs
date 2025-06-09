@@ -152,7 +152,6 @@ pub fn stdlib() -> Env {
             String::from("map"),
             curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
-                    dbg!("SEX");
                     return Err(LeatError::InvalidOperation);
                 };
                 Ok(Value::Array(
