@@ -36,14 +36,14 @@ pub fn stdlib() -> Env {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a + b)),
                 [Value::String(a), Value::String(b)] => Ok(Value::String(a + &b)),
                 [Value::Array(a), Value::Array(b)] => Ok(Value::Array([a, b].concat())),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
             String::from("-"),
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a - b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
@@ -51,21 +51,21 @@ pub fn stdlib() -> Env {
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a * b)),
                 [Value::String(a), Value::Number(b)] => Ok(Value::String(a.repeat(b as usize))),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
             String::from("/"),
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a / b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
             String::from("%"),
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a % b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
@@ -77,7 +77,7 @@ pub fn stdlib() -> Env {
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Bool(a > b)),
                 [Value::String(a), Value::String(b)] => Ok(Value::Bool(a > b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
@@ -85,21 +85,21 @@ pub fn stdlib() -> Env {
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Bool(a < b)),
                 [Value::String(a), Value::String(b)] => Ok(Value::Bool(a < b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Number)),
             }),
         ),
         (
             String::from("&"),
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a & b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Bool)),
             }),
         ),
         (
             String::from("|"),
             curry_2arg!(|a, b, _| match [a, b] {
                 [Value::Bool(a), Value::Bool(b)] => Ok(Value::Bool(a | b)),
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Bool)),
             }),
         ),
         (
@@ -115,7 +115,7 @@ pub fn stdlib() -> Env {
                         Err(LeatError::InvalidOperation)
                     }
                 }
-                _ => Err(LeatError::InvalidOperation),
+                _ => Err(LeatError::TypeMismatch(Type::Kind)),
             }),
         ),
         (
@@ -137,7 +137,7 @@ pub fn stdlib() -> Env {
             Value::Lambda(Lambda::BuiltIn(
                 |array, _| {
                     let Value::Array(array) = array else {
-                        return Err(LeatError::InvalidOperation);
+                        return Err(LeatError::TypeMismatch(Type::Array));
                     };
                     Ok(ok!(array.first())?.clone())
                 },
@@ -149,7 +149,7 @@ pub fn stdlib() -> Env {
             Value::Lambda(Lambda::BuiltIn(
                 |array, _| {
                     let Value::Array(array) = array else {
-                        return Err(LeatError::InvalidOperation);
+                        return Err(LeatError::TypeMismatch(Type::Array));
                     };
                     Ok(Value::Array(ok!(array.get(1..))?.to_vec()))
                 },
@@ -160,10 +160,10 @@ pub fn stdlib() -> Env {
             String::from("~"),
             curry_2arg!(|a, b, _| {
                 let Value::Number(a) = a else {
-                    return Err(LeatError::InvalidOperation);
+                    return Err(LeatError::TypeMismatch(Type::Number));
                 };
                 let Value::Number(b) = b else {
-                    return Err(LeatError::InvalidOperation);
+                    return Err(LeatError::TypeMismatch(Type::Number));
                 };
                 let mut result = vec![];
                 for i in a as usize..b as usize {
@@ -176,7 +176,7 @@ pub fn stdlib() -> Env {
             String::from("map"),
             curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
-                    return Err(LeatError::InvalidOperation);
+                    return Err(LeatError::TypeMismatch(Type::Array));
                 };
                 Ok(Value::Array(
                     array
@@ -196,7 +196,7 @@ pub fn stdlib() -> Env {
             String::from("filter"),
             curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
-                    return Err(LeatError::InvalidOperation);
+                    return Err(LeatError::TypeMismatch(Type::Array));
                 };
                 Ok(Value::Array(
                     array
@@ -218,7 +218,7 @@ pub fn stdlib() -> Env {
             String::from("reduce"),
             curry_2arg!(|func: Value, array, env: &mut Env| {
                 let Value::Array(array) = array else {
-                    return Err(LeatError::InvalidOperation);
+                    return Err(LeatError::TypeMismatch(Type::Array));
                 };
                 let mut result = ok!(array.first())?.clone();
                 for value in ok!(array.get(1..))? {
@@ -239,7 +239,7 @@ pub fn stdlib() -> Env {
             Value::Lambda(Lambda::BuiltIn(
                 |msg, _| {
                     let Value::String(msg) = msg else {
-                        return Err(LeatError::InvalidOperation);
+                        return Err(LeatError::TypeMismatch(Type::String));
                     };
                     Err(LeatError::UserDefined(msg))
                 },
@@ -260,15 +260,15 @@ pub fn stdlib() -> Env {
                                         expr_env,
                                     ))) = env.get("expr")
                                     else {
-                                        return Err(LeatError::InvalidOperation);
+                                        return Err(LeatError::TypeMismatch(Type::Lambda));
                                     };
                                     let Some(Value::Lambda(Lambda::UserDefined(_, from, _))) =
                                         env.get("from")
                                     else {
-                                        return Err(LeatError::InvalidOperation);
+                                        return Err(LeatError::TypeMismatch(Type::Lambda));
                                     };
                                     let Value::Lambda(Lambda::UserDefined(_, to, _)) = c else {
-                                        return Err(LeatError::InvalidOperation);
+                                        return Err(LeatError::TypeMismatch(Type::Lambda));
                                     };
                                     Ok(Value::Lambda(Lambda::UserDefined(
                                         arg.to_string(),
