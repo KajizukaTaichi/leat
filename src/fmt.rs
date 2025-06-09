@@ -50,16 +50,29 @@ impl Display for Value {
                 })
             }
             Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "(\\x. {func:?})"),
-            Value::Type(typ) => write!(f, "{}", format!("#{typ:?}").to_lowercase()),
+            Value::Type(typ) => write!(f, "{typ}"),
         }
     }
 }
 
+impl Display for Type {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        match self {
+            Type::Number => write!(f, "#number"),
+            Type::String => write!(f, "#string"),
+            Type::Bool => write!(f, "#bool"),
+            Type::Array => write!(f, "#array"),
+            Type::Lambda => write!(f, "#lambda"),
+            Type::Kind => write!(f, "#kind"),
+        }
+    }
+}
 impl Display for LeatError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         match self {
             LeatError::Undefined(name) => write!(f, "can't refer undefined variable name `{name}`"),
             LeatError::CantReassign(name) => write!(f, "can't reassign variable `{name}` again"),
+            LeatError::TypeMismatch(name) => write!(f, "can't reassign variable `{name:?}` again"),
             LeatError::NonLambda(expr) => write!(f, "can't apply non-lambda value `{expr}`"),
             LeatError::InvalidArg(name) => write!(f, "invalid argument's name `{name}` for lambda"),
             LeatError::InvalidBind(expr) => write!(f, "invalid bind `{expr}` using let expression"),
