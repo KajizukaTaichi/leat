@@ -14,3 +14,28 @@ let fact n :=
 in
 5 |> fact
 ```
+
+```ocaml
+let fizzbuzz n := (
+    if n % 15 == 0 then "FizzBuzz"
+    else if n % 3 == 0 then "Fizz"
+    else if n % 5 == 0 then "Buzz"
+    else cast n #string
+) in
+map fizzbuzz (1 ~ 101)
+```
+
+```ocaml
+let to_num n := n (\x. x + 1) 0 in
+let inc n := ast-replace n (\x. x) (\x. f x) in
+let dec n := ast-replace n (\x. f x) (\x. x) in
+let church n :=
+    if n == 0 then (\f.\x. x)
+    else inc (church (n - 1))
+in
+let add a b :=
+    if to_num b == 0 then a
+    else add (inc a) (dec b)
+in
+to_num (add (church 3) (church 2))
+```
