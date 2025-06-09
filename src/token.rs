@@ -31,11 +31,11 @@ impl Token {
         } else if token == "in" {
             Token::In
         } else if token == "try" {
-            Token::If
-        } else if token == "catch" {
             Token::Try
-        } else if token == "if" {
+        } else if token == "catch" {
             Token::Catch
+        } else if token == "if" {
+            Token::If
         } else if token == "then" {
             Token::Then
         } else if token == "else" {
