@@ -19,7 +19,17 @@ impl Display for Value {
             Value::Number(n) => write!(f, "{n}"),
             Value::String(s) => write!(f, "\"{s}\""),
             Value::Bool(b) => write!(f, "{b}"),
-            Value::Lambda(Lambda::UserDefined(arg, body, _)) => write!(f, "(\\{arg}. {body})"),
+            Value::Lambda(Lambda::UserDefined(arg, body, env)) => {
+                write!(f, "(\\{arg}. {})", {
+                    let mut body = body.clone();
+                    for (key, val) in env {
+                        let key = &Expr::Variable(key.to_owned());
+                        let val = &Expr::Literal(val.clone());
+                        *body = body.replace(key, val);
+                    }
+                    body
+                })
+            }
             Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "(\\x. {func:?})"),
             Value::Type(typ) => write!(f, "{}", format!("#{typ:?}").to_lowercase()),
         }
