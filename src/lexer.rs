@@ -30,6 +30,13 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                 }
                 tokens.push(Token::Dot);
             }
+            ',' if in_parentheses == 0 => {
+                if !current_token.is_empty() {
+                    tokens.push(Token::new(current_token.clone())?);
+                    current_token.clear();
+                }
+                tokens.push(Token::Comma);
+            }
             other => {
                 if other.is_whitespace() && !in_quote {
                     if in_parentheses != 0 {
