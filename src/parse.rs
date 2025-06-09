@@ -37,6 +37,10 @@ impl Expr {
             };
             let lambda = Lambda::UserDefined(arg.to_string(), body, IndexMap::new());
             Some(Expr::Literal(Value::Lambda(lambda)))
+        } else if let [Token::Number(a), Token::Dot, Token::Number(b)] = tokens.as_slice() {
+            Some(Expr::Literal(Value::Number(
+                format!("{a}.{b}").parse::<f64>().unwrap(),
+            )))
         } else if tokens.len() >= 2 {
             if let Token::Ident(operator) = tokens.get(tokens.len() - 2)? {
                 if operator.chars().all(|c| c.is_ascii_punctuation()) {
