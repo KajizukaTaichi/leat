@@ -126,7 +126,7 @@ pub fn stdlib() -> Env {
             )),
         ),
         (
-            String::from("range"),
+            String::from("~"),
             curry_2arg!(|a, b, _| {
                 let Value::Number(a) = a else {
                     return Err(LeatError::InvalidOperation);
