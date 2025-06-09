@@ -37,6 +37,17 @@ impl Expr {
             };
             let lambda = Lambda::UserDefined(arg.to_string(), body, IndexMap::new());
             Some(Expr::Literal(Value::Lambda(lambda)))
+        } else if let Token::LeftBracket = tokens.first()? {
+            let tokens = tokens.get(1..)?;
+            let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Dot).collect();
+            let body = tokens.get(1..)?.join(&Token::Dot);
+            let body = Box::new(Expr::parse(body)?);
+            let arg = tokens.first()?.to_vec();
+            let [Token::Ident(arg)] = arg.as_slice() else {
+                return None;
+            };
+            let lambda = Lambda::UserDefined(arg.to_string(), body, IndexMap::new());
+            Some(Expr::Literal(Value::Lambda(lambda)))
         } else if tokens.len() >= 2 {
             if let Token::Ident(operator) = tokens.get(tokens.len() - 2)? {
                 if operator.chars().all(|c| c.is_ascii_punctuation()) {
