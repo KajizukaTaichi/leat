@@ -26,6 +26,7 @@ pub fn stdlib() -> Env {
             curry_2arg!(|a, b| match [a, b] {
                 [Value::Number(a), Value::Number(b)] => Ok(Value::Number(a + b)),
                 [Value::String(a), Value::String(b)] => Ok(Value::String(a + &b)),
+                [Value::Array(a), Value::Array(b)] => Ok(Value::Array([a, b].concat())),
                 _ => Err(LeatError::InvalidOperation),
             }),
         ),
