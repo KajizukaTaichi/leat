@@ -6,6 +6,14 @@ impl Display for Expr {
         match self {
             Expr::Literal(value) => write!(f, "{value}"),
             Expr::Call(func, arg) => write!(f, "({func} {arg})"),
+            Expr::Array(array) => {
+                let array = array
+                    .iter()
+                    .map(|x| format!("{x}"))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                write!(f, "[{array}]",)
+            }
             Expr::Let(name, value, expr) => write!(f, "(let {name} := {value} in {expr})"),
             Expr::If(cond, then, els) => write!(f, "(if {cond} then {then} else {els})"),
             Expr::Variable(name) => write!(f, "{name}"),
@@ -19,6 +27,14 @@ impl Display for Value {
             Value::Number(n) => write!(f, "{n}"),
             Value::String(s) => write!(f, "\"{s}\""),
             Value::Bool(b) => write!(f, "{b}"),
+            Value::Array(array) => {
+                let array = array
+                    .iter()
+                    .map(|x| format!("{x}"))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                write!(f, "[{array}]",)
+            }
             Value::Lambda(Lambda::UserDefined(arg, body, env)) => {
                 write!(f, "(\\{arg}. {})", {
                     let mut body = body.clone();
