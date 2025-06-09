@@ -10,6 +10,7 @@ pub enum Token {
     Type(Type),
     Lambda,
     Dot,
+    Comma,
     Let,
     Assign,
     In,
@@ -45,6 +46,8 @@ impl Token {
         } else if token == "\\" {
             Token::Lambda
         } else if token == "." {
+            Token::Dot
+        } else if token == "," {
             Token::Dot
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
