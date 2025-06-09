@@ -3,4 +3,5 @@ let church n :=
     else ast-replace (church (n - 1)) (\x. x) (\x. f x)
 in
 let to_stdnum n := n (\x. x + 1) 1 in
-church 3
+let add m n := \f. \x. m f (n f x) in
+church 5
