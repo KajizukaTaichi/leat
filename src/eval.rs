@@ -64,6 +64,19 @@ impl Expr {
                     els.eval(env)
                 }
             }
+            Expr::Try(risky, callback) => {
+                let Value::Lambda(lambda) = callback.eval(env)? else {
+                    return Err(LeatError::NonLambda(*callback.clone()));
+                };
+                match risky.eval(env) {
+                    Ok(result) => Ok(result),
+                    Err(error) => Expr::Call(
+                        Box::new(Expr::Literal(Value::Lambda(lambda))),
+                        Box::new(Expr::Literal(Value::String(format!("{error}")))),
+                    )
+                    .eval(env),
+                }
+            }
         }
     }
 }
