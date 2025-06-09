@@ -59,10 +59,10 @@ impl Expr {
                 _ => Err(LeatError::InvalidBind(*name.clone())),
             },
             Expr::If(cond, then, els) => {
-                if let Value::Bool(true) = cond.eval(env)? {
-                    then.eval(env)
-                } else {
+                if let Ok(Value::Bool(false)) | Err(_) = cond.eval(env) {
                     els.eval(env)
+                } else {
+                    then.eval(env)
                 }
             }
             Expr::Try(risky, callback) => match risky.eval(env) {
