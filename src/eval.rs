@@ -1,3 +1,5 @@
+use std::clone;
+
 use crate::*;
 
 impl Expr {
@@ -74,16 +76,13 @@ impl Expr {
 
     pub fn reduct(&self, env: &mut Env) -> Result<Expr, LeatError> {
         match self {
-            Expr::Literal(value) => match value {
-                Value::Lambda(Lambda::UserDefined(arg, body, _)) => {
-                    Ok(Expr::Literal(Value::Lambda(Lambda::UserDefined(
-                        arg.to_string(),
-                        Box::new(body.reduct(env)?),
-                        env.clone(),
-                    ))))
-                }
-                _ => Ok(Expr::Literal(value.to_owned())),
-            },
+            Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, _))) => {
+                Ok(Expr::Literal(Value::Lambda(Lambda::UserDefined(
+                    arg.to_string(),
+                    Box::new(body.reduct(env)?),
+                    env.clone(),
+                ))))
+            }
             Expr::Array(array) => Ok(Expr::Array(
                 array
                     .iter()
@@ -136,6 +135,7 @@ impl Expr {
                 Box::new(risky.reduct(env)?),
                 Box::new(callback.reduct(env)?),
             )),
+            _ => Ok(self.clone()),
         }
     }
 }
