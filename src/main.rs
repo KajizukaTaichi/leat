@@ -6,12 +6,13 @@ mod parse;
 mod stdlib;
 mod token;
 
+use colored::*;
 use indexmap::IndexMap;
 use rustyline::{DefaultEditor, error::ReadlineError};
 pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
-    println!("Leat REPL");
+    println!("{} REPL", "Leat".bold().blue());
     let mut rl = DefaultEditor::new().unwrap();
     let mut buf = String::new();
     let mut env = stdlib();
@@ -23,15 +24,15 @@ fn main() {
                 rl.add_history_entry(code).unwrap();
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     match ast.eval(&mut env) {
-                        Ok(res) => println!("{res}"),
-                        Err(err) => println!("Error! {err}"),
+                        Ok(res) => println!("{} {res}", "=>".green()),
+                        Err(err) => println!("{} {err}", "Error!".red()),
                     }
                     buf.clear();
                 }
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
-                println!("[Code buffer is cleared]");
+                println!("{}", "[Code buffer is cleared]".underline());
             }
             Err(ReadlineError::Eof) => {
                 println!("Bye");
