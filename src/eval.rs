@@ -1,5 +1,3 @@
-use std::clone;
-
 use crate::*;
 
 impl Expr {
@@ -98,7 +96,7 @@ impl Expr {
                         let mut env = env.clone();
                         env.extend(func_env.clone());
                         let value = arg.eval(&mut env)?;
-                        env.insert(arg_name, value);
+                        env.insert(arg_name.clone(), value);
                         Ok(Expr::Literal(Value::Lambda(Lambda::UserDefined(
                             arg_name,
                             Box::new(body.reduct(&mut env)?),
