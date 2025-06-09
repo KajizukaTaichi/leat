@@ -16,6 +16,10 @@ impl Expr {
                     Box::new(func.replace(from, to)),
                     Box::new(args.replace(from, to)),
                 ),
+                Expr::Try(risky, callback) => Expr::Try(
+                    Box::new(risky.replace(from, to)),
+                    Box::new(callback.replace(from, to)),
+                ),
                 Expr::If(cond, then, els) => Expr::If(
                     Box::new(cond.replace(from, to)),
                     Box::new(then.replace(from, to)),
