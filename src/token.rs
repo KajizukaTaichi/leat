@@ -9,6 +9,8 @@ pub enum Token {
     Nest(Vec<Token>),
     Type(Type),
     Lambda,
+    LeftBracket,
+    RightBracket,
     Dot,
     Comma,
     Let,
@@ -48,7 +50,11 @@ impl Token {
         } else if token == "." {
             Token::Dot
         } else if token == "," {
-            Token::Dot
+            Token::Comma
+        } else if token == "[" {
+            Token::LeftBracket
+        } else if token == "]" {
+            Token::RightBracket
         } else if let Ok(b) = token.parse::<bool>() {
             Token::Bool(b)
         } else if let Ok(n) = token.parse::<f64>() {
