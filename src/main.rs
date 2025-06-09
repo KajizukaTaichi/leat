@@ -1,6 +1,7 @@
 mod eval;
 mod fmt;
 mod lexer;
+mod meta;
 mod parse;
 mod stdlib;
 mod token;
