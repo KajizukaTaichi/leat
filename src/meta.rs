@@ -21,6 +21,9 @@ impl Expr {
                     Box::new(then.replace(from, to)),
                     Box::new(els.replace(from, to)),
                 ),
+                Expr::Array(array) => {
+                    Expr::Array(array.iter().map(|x| x.replace(from, to)).collect())
+                }
                 Expr::Variable(name) => Expr::Variable(name.to_owned()),
                 Expr::Literal(Value::Lambda(Lambda::UserDefined(arg, body, env))) => {
                     Expr::Literal(Value::Lambda(Lambda::UserDefined(
