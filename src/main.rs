@@ -84,6 +84,7 @@ pub enum LeatError {
     NonLambda(Expr),
     InvalidBind(Expr),
     InvalidArg(Expr),
+    TypeMismatch(Type),
     InvalidOperation,
     UserDefined(String),
 }
