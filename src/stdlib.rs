@@ -114,5 +114,45 @@ pub fn stdlib() -> Env {
                 IndexMap::new(),
             )),
         ),
+        (
+            String::from("ast-replace"),
+            Value::Lambda(Lambda::BuiltIn(
+                |a, mut env| {
+                    Ok(Value::Lambda(Lambda::BuiltIn(
+                        |b, mut env| {
+                            Ok(Value::Lambda(Lambda::BuiltIn(
+                                |c, mut env| {
+                                    let Some(Value::Lambda(Lambda::UserDefined(a_a, a, a_c))) =
+                                        env.get("a")
+                                    else {
+                                        return Err(LeatError::InvalidOperation);
+                                    };
+                                    let Some(Value::Lambda(Lambda::UserDefined(b_a, b, b_c))) =
+                                        env.get("a")
+                                    else {
+                                        return Err(LeatError::InvalidOperation);
+                                    };
+                                    let Some(Value::Lambda(Lambda::UserDefined(c_a, c, c_c))) =
+                                        env.get("b")
+                                    else {
+                                        return Err(LeatError::InvalidOperation);
+                                    };
+                                    todo!()
+                                },
+                                {
+                                    env.insert(String::from("b"), b);
+                                    env
+                                },
+                            )))
+                        },
+                        {
+                            env.insert(String::from("a"), a);
+                            env
+                        },
+                    )))
+                },
+                IndexMap::new(),
+            )),
+        ),
     ])
 }
