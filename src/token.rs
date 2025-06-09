@@ -18,6 +18,8 @@ pub enum Token {
     If,
     Then,
     Else,
+    Try,
+    Catch,
 }
 
 impl Token {
@@ -28,8 +30,12 @@ impl Token {
             Token::Assign
         } else if token == "in" {
             Token::In
-        } else if token == "if" {
+        } else if token == "try" {
             Token::If
+        } else if token == "catch" {
+            Token::Try
+        } else if token == "if" {
+            Token::Catch
         } else if token == "then" {
             Token::Then
         } else if token == "else" {
