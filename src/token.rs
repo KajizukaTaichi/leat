@@ -46,6 +46,8 @@ impl Token {
             Token::Type(Type::String)
         } else if token == "#bool" {
             Token::Type(Type::Bool)
+        } else if token == "#array" {
+            Token::Type(Type::Array)
         } else if token == "#lambda" {
             Token::Type(Type::Lambda)
         } else if token == "#kind" {
