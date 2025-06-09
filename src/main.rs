@@ -43,6 +43,7 @@ pub enum Expr {
     If(Box<Expr>, Box<Expr>, Box<Expr>),
     Let(Box<Expr>, Box<Expr>, Box<Expr>),
     Call(Box<Expr>, Box<Expr>),
+    Array(Vec<Expr>),
     Variable(String),
     Literal(Value),
 }
@@ -52,6 +53,7 @@ pub enum Value {
     Number(f64),
     String(String),
     Bool(bool),
+    Array(Vec<Value>),
     Lambda(Lambda),
     Type(Type),
 }
