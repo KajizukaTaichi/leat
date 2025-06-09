@@ -27,8 +27,12 @@ impl Expr {
                     return Err(LeatError::NonLambda(*func.clone()));
                 };
                 match lambda {
-                    Lambda::BuiltIn(body, func_env) => body(arg.eval(env)?, func_env),
+                    Lambda::BuiltIn(body, mut func_env) => {
+                        func_env.extend(env.clone());
+                        body(arg.eval(env)?, env.clone())
+                    }
                     Lambda::UserDefined(arg_name, body, mut func_env) => {
+                        dbg!(&env);
                         func_env.extend(env.clone());
                         func_env.insert(arg_name, arg.eval(env)?);
                         body.eval(&mut func_env)
