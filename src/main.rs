@@ -8,7 +8,6 @@ mod token;
 
 use indexmap::IndexMap;
 use rustyline::{DefaultEditor, error::ReadlineError};
-use std::process::Command;
 pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
@@ -32,10 +31,12 @@ fn main() {
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
-                Command::new("clear").status().unwrap();
-                println!("Leat REPL");
+                println!("[Code buffer is cleared]");
             }
-            Err(ReadlineError::Eof) => break,
+            Err(ReadlineError::Eof) => {
+                println!("Bye");
+                break;
+            }
             _ => {}
         }
     }
