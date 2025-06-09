@@ -84,4 +84,5 @@ pub enum LeatError {
     InvalidBind(Expr),
     InvalidArg(Expr),
     InvalidOperation,
+    UserDefined(String),
 }
