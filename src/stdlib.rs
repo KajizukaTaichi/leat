@@ -235,6 +235,18 @@ pub fn stdlib() -> Env {
             }),
         ),
         (
+            String::from("throw"),
+            Value::Lambda(Lambda::BuiltIn(
+                |msg, _| {
+                    let Value::String(msg) = msg else {
+                        return Err(LeatError::InvalidOperation);
+                    };
+                    Err(LeatError::UserDefined(msg))
+                },
+                IndexMap::new(),
+            )),
+        ),
+        (
             String::from("ast-replace"),
             Value::Lambda(Lambda::BuiltIn(
                 |expr, mut env| {
