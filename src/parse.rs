@@ -37,6 +37,14 @@ impl Expr {
             };
             let lambda = Lambda::UserDefined(arg.to_string(), body, IndexMap::new());
             Some(Expr::Literal(Value::Lambda(lambda)))
+        } else if let Token::Try = tokens.first()? {
+            let tokens = tokens.get(1..)?;
+            let tokens: Vec<&[Token]> = tokens.split(|x| *x == Token::Catch).collect();
+            let trys = tokens.first()?.to_vec();
+            let trys = Box::new(Expr::parse(trys)?);
+            let catch = tokens.get(1..)?.join(&Token::Catch);
+            let catch = Box::new(Expr::parse(catch)?);
+            Some(Expr::Try(trys, catch))
         } else if let [Token::Number(a), Token::Dot, Token::Number(b)] = tokens.as_slice() {
             Some(Expr::Literal(Value::Number(
                 format!("{a}.{b}").parse::<f64>().unwrap(),
