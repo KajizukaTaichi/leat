@@ -84,6 +84,31 @@ impl Expr {
                         .map(|x| Expr::parse(x.to_vec()))
                         .collect::<Option<Vec<_>>>()?,
                 )),
+                Token::FString(tokens) => {
+                    let mut expr = Expr::Call(
+                        Box::new(Expr::Call(
+                            Box::new(Expr::Variable(String::from("cast"))),
+                            Box::new(Expr::parse(vec![tokens.first()?.clone()])?),
+                        )),
+                        Box::new(Expr::Literal(Value::Type(Type::String))),
+                    );
+                    for rhs in tokens.get(1..)? {
+                        expr = Expr::Call(
+                            Box::new(Expr::Call(
+                                Box::new(Expr::Variable(String::from("+"))),
+                                Box::new(expr),
+                            )),
+                            Box::new(Expr::Call(
+                                Box::new(Expr::Call(
+                                    Box::new(Expr::Variable(String::from("cast"))),
+                                    Box::new(Expr::parse(vec![rhs.clone()])?),
+                                )),
+                                Box::new(Expr::Literal(Value::Type(Type::String))),
+                            )),
+                        );
+                    }
+                    Some(expr)
+                }
                 _ => None,
             }
         }
