@@ -9,9 +9,9 @@
 ```ocaml
 let |> := \a.\f. f a in
 let fact n :=
-  if n == 0
-    then 1
-    else fact (n - 1) * n
+    if n == 0
+        then 1
+        else fact (n - 1) * n
 in
 5 |> fact
 ```
