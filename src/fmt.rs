@@ -70,7 +70,7 @@ impl Display for Type {
 impl Display for LeatError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         match self {
-            LeatError::Undefined(name) => write!(f, "can't refer undefined variable name `{name}`"),
+            LeatError::Undefined(name) => write!(f, "can't refer undefined variable `{name}`"),
             LeatError::CantReassign(name) => write!(f, "can't reassign variable `{name}` again"),
             LeatError::TypeMismatch(name) => write!(f, "type mismatch, so expected `{name}`"),
             LeatError::NonLambda(expr) => write!(f, "can't apply non-lambda value `{expr}`"),
