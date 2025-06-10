@@ -124,7 +124,7 @@ pub fn f_string(input: &str) -> Option<Vec<Token>> {
         return None;
     }
     if !current_token.is_empty() {
-        tokens.push(Token::new(current_token.clone())?);
+        tokens.push(Token::String(current_token.clone()));
         current_token.clear();
     }
 
