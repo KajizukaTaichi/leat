@@ -7,10 +7,8 @@ mod repl;
 mod stdlib;
 mod token;
 
-use crate::repl::repl;
 use indexmap::IndexMap;
-
-pub use {lexer::lex, stdlib::stdlib, token::Token};
+pub use {lexer::lex, repl::repl, stdlib::stdlib, token::Token};
 
 fn main() {
     repl();
