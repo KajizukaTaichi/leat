@@ -5,7 +5,7 @@ use crossterm::{
     execute,
     terminal::{Clear, ClearType},
 };
-use rustyline::{DefaultEditor, error::ReadlineError};
+use rustyline::{Cmd, DefaultEditor, KeyCode, KeyEvent, Modifiers, error::ReadlineError};
 use std::io::stdout;
 
 pub fn repl() {
@@ -14,6 +14,11 @@ pub fn repl() {
     let mut buf = String::new();
     let mut env = stdlib();
     let mut line = 1;
+
+    rl.bind_sequence(
+        KeyEvent(KeyCode::Tab, Modifiers::NONE),
+        Cmd::Insert(4, String::from(" ")),
+    );
 
     loop {
         match rl.readline("> ") {
