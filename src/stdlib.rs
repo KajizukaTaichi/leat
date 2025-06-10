@@ -291,5 +291,24 @@ pub fn stdlib() -> Env {
                 IndexMap::new(),
             )),
         ),
+        (
+            String::from("join"),
+            curry_2arg!(|array, del, env: &mut Env| {
+                let Value::Array(array) = array else {
+                    return Err(LeatError::TypeMismatch(Type::Array));
+                };
+                let Value::String(del) = del else {
+                    return Err(LeatError::TypeMismatch(Type::String));
+                };
+                let mut string_array = vec![];
+                for i in array {
+                    let Value::String(i) = i else {
+                        return Err(LeatError::TypeMismatch(Type::String));
+                    };
+                    string_array.push(i);
+                }
+                Ok(Value::String(string_array.join(&del)))
+            }),
+        ),
     ])
 }
