@@ -85,26 +85,26 @@ impl Expr {
                         .collect::<Option<Vec<_>>>()?,
                 )),
                 Token::FString(tokens) => {
-                    let mut expr = Expr::Call(
-                        Box::new(Expr::Call(
-                            Box::new(Expr::Variable(String::from("cast"))),
-                            Box::new(Expr::parse(vec![tokens.first()?.clone()])?),
-                        )),
-                        Box::new(Expr::Literal(Value::Type(Type::String))),
-                    );
+                    macro_rules! cast_to_string {
+                        ($val: expr) => {
+                            Expr::Call(
+                                Box::new(Expr::Call(
+                                    Box::new(Expr::Variable(String::from("cast"))),
+                                    Box::new($val),
+                                )),
+                                Box::new(Expr::Literal(Value::Type(Type::String))),
+                            )
+                        };
+                    }
+
+                    let mut expr = cast_to_string!(Expr::parse(vec![tokens.first()?.clone()])?);
                     for rhs in tokens.get(1..)? {
                         expr = Expr::Call(
                             Box::new(Expr::Call(
                                 Box::new(Expr::Variable(String::from("+"))),
                                 Box::new(expr),
                             )),
-                            Box::new(Expr::Call(
-                                Box::new(Expr::Call(
-                                    Box::new(Expr::Variable(String::from("cast"))),
-                                    Box::new(Expr::parse(vec![rhs.clone()])?),
-                                )),
-                                Box::new(Expr::Literal(Value::Type(Type::String))),
-                            )),
+                            Box::new(cast_to_string!(Expr::parse(vec![rhs.clone()])?)),
                         );
                     }
                     Some(expr)
