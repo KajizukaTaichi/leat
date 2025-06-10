@@ -87,24 +87,27 @@ impl Expr {
                 Token::FString(tokens) => {
                     macro_rules! cast_to_string {
                         ($val: expr) => {
-                            Expr::Call(
-                                Box::new(Expr::Call(
-                                    Box::new(Expr::Variable(String::from("cast"))),
-                                    Box::new($val),
-                                )),
-                                Box::new(Expr::Literal(Value::Type(Type::String))),
-                            )
+                            if let Token::String(_) = $val {
+                                Expr::parse(vec![$val])?
+                            } else {
+                                Expr::Call(
+                                    Box::new(Expr::Call(
+                                        Box::new(Expr::Variable(String::from("cast"))),
+                                        Box::new(Expr::parse(vec![$val])?),
+                                    )),
+                                    Box::new(Expr::Literal(Value::Type(Type::String))),
+                                )
+                            }
                         };
                     }
-
-                    let mut expr = cast_to_string!(Expr::parse(vec![tokens.first()?.clone()])?);
+                    let mut expr = cast_to_string!(tokens.first()?.clone());
                     for rhs in tokens.get(1..)? {
                         expr = Expr::Call(
                             Box::new(Expr::Call(
                                 Box::new(Expr::Variable(String::from("+"))),
                                 Box::new(expr),
                             )),
-                            Box::new(cast_to_string!(Expr::parse(vec![rhs.clone()])?)),
+                            Box::new(cast_to_string!(rhs.clone())),
                         );
                     }
                     Some(expr)
