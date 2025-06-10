@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{lexer::text_escape, *};
 
 impl Expr {
     pub fn parse(tokens: Vec<Token>) -> Option<Expr> {
@@ -73,7 +73,7 @@ impl Expr {
         } else {
             match tokens.first()? {
                 Token::Number(n) => Some(Expr::Literal(Value::Number(*n))),
-                Token::String(s) => Some(Expr::Literal(Value::String(s.to_owned()))),
+                Token::String(s) => Some(Expr::Literal(Value::String(text_escape(s)))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
                 Token::Type(t) => Some(Expr::Literal(Value::Type(t.clone()))),
                 Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
