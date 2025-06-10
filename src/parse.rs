@@ -50,17 +50,22 @@ impl Expr {
                 format!("{a}.{b}").parse::<f64>().unwrap(),
             )))
         } else if tokens.len() >= 2 {
-            if let Token::Ident(operator) = tokens.get(tokens.len() - 2)? {
-                if operator.chars().all(|c| c.is_ascii_punctuation()) {
-                    if let Some(lhs) = Expr::parse(tokens.get(..tokens.len() - 2)?.to_vec()) {
-                        let rhs = Expr::parse(vec![tokens.last()?.clone()])?;
-                        return Some(Expr::Call(
-                            Box::new(Expr::Call(
-                                Box::new(Expr::Variable(operator.to_owned())),
-                                Box::new(lhs),
-                            )),
-                            Box::new(rhs),
-                        ));
+            for i in 2..=tokens.len() - 1 {
+                if let Token::Ident(operator) = tokens.get(tokens.len() - i)? {
+                    if operator.chars().all(|c| c.is_ascii_punctuation()) {
+                        if let Some(lhs) = Expr::parse(tokens.get(..tokens.len() - i)?.to_vec()) {
+                            if let Some(rhs) =
+                                Expr::parse(tokens.get(tokens.len() - i + 1..)?.to_vec())
+                            {
+                                return Some(Expr::Call(
+                                    Box::new(Expr::Call(
+                                        Box::new(Expr::Variable(operator.to_owned())),
+                                        Box::new(lhs),
+                                    )),
+                                    Box::new(rhs),
+                                ));
+                            }
+                        }
                     }
                 }
             }
