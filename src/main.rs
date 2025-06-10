@@ -18,14 +18,14 @@ fn main() {
     let mut env = stdlib();
 
     loop {
-        match rl.readline("") {
+        match rl.readline("> ") {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
                 rl.add_history_entry(code).unwrap();
                 if let Some(Some(ast)) = lex(&buf).map(|x| Expr::parse(x)) {
                     match ast.eval(&mut env) {
-                        Ok(res) => println!("{} {res}", "=>".green()),
+                        Ok(res) => println!("{} {res}", "=".green()),
                         Err(err) => println!("{} {err}", "Error!".red()),
                     }
                     buf.clear();
