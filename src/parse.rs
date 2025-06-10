@@ -46,9 +46,8 @@ impl Expr {
             let catch = Box::new(Expr::parse(catch)?);
             Some(Expr::Try(trys, catch))
         } else if let [Token::Number(a), Token::Dot, Token::Number(b)] = tokens.as_slice() {
-            Some(Expr::Literal(Value::Number(
-                format!("{a}.{b}").parse::<f64>().unwrap(),
-            )))
+            let number = format!("{a}.{b}").parse::<f64>().unwrap();
+            Some(Expr::Literal(Value::Number(number)))
         } else if tokens.len() >= 2 {
             for i in 2..=tokens.len() - 1 {
                 if let Token::Ident(operator) = tokens.get(tokens.len() - i)? {
