@@ -8,7 +8,7 @@ mod token;
 
 use colored::*;
 use indexmap::IndexMap;
-use rustyline::{error::ReadlineError, DefaultEditor};
+use rustyline::{DefaultEditor, error::ReadlineError};
 pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
@@ -16,9 +16,9 @@ fn main() {
     let mut rl = DefaultEditor::new().unwrap();
     let mut buf = String::new();
     let mut env = stdlib();
-    let mut line = 0;
+
     loop {
-        match rl.readline(&format!("{line:>3}| ")) {
+        match rl.readline("") {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
@@ -29,14 +29,10 @@ fn main() {
                         Err(err) => println!("{} {err}", "Error!".red()),
                     }
                     buf.clear();
-                    line = 0
-                } else {
-                    line += 1
                 }
             }
             Err(ReadlineError::Interrupted) => {
                 buf.clear();
-                line = 0;
                 println!("{}", "Code buffer is cleared".underline());
             }
             Err(ReadlineError::Eof) => {
