@@ -18,7 +18,7 @@ fn main() {
     let mut env = stdlib();
     let mut line = 0;
     loop {
-        match rl.readline(&format!("[{line:0>3}]: ")) {
+        match rl.readline(&format!("{line:<0}|: ")) {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
