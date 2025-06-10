@@ -115,6 +115,8 @@ pub fn stdlib() -> Env {
                         Err(LeatError::InvalidOperation)
                     }
                 }
+                [Value::String(a), Value::Type(Type::String)] => Ok(Value::String(a)),
+                [Value::Number(a), Value::Type(Type::Number)] => Ok(Value::Number(a)),
                 _ => Err(LeatError::TypeMismatch(Type::Kind)),
             }),
         ),
