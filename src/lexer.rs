@@ -48,7 +48,7 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                     }
                     tokens.push(Token::Comma);
                 }
-                '\'' => {
+                '`' => {
                     current_token.push(c);
                     is_escape = true;
                 }
@@ -89,7 +89,7 @@ pub fn text_escape(text: &str) -> String {
             is_escape = false;
         } else {
             match c {
-                '\'' => {
+                '`' => {
                     is_escape = true;
                 }
                 _ => result.push(c),
