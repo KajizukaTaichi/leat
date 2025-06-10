@@ -15,18 +15,19 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                 'r' => '\r',
                 _ => c,
             });
+            is_escape = false;
         } else {
             is_escape = false;
             match c {
-                '(' | '{' | '[' if !in_quote => {
+                '(' | '[' if !in_quote => {
                     current_token.push(c);
                     in_parentheses += 1;
                 }
-                ')' | '}' | ']' if !in_quote => {
+                ')' | ']' if !in_quote => {
                     current_token.push(c);
                     in_parentheses.checked_sub(1).map(|x| in_parentheses = x);
                 }
-                '"' | '\'' | '`' => {
+                '"' => {
                     in_quote = !in_quote;
                     current_token.push(c);
                 }
@@ -47,7 +48,7 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                     }
                     tokens.push(Token::Comma);
                 }
-                '¥' => {
+                '\'' => {
                     current_token.push(c);
                     is_escape = true;
                 }
@@ -88,7 +89,7 @@ pub fn text_escape(text: &str) -> String {
             is_escape = false;
         } else {
             match c {
-                '¥' => {
+                '\'' => {
                     is_escape = true;
                 }
                 _ => result.push(c),
