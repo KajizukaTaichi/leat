@@ -5,5 +5,6 @@ edition = "2024"
 
 [dependencies]
 colored = "3.0.0"
+crossterm = "0.29.0"
 indexmap = "2.9.0"
 rustyline = "16.0.0"
