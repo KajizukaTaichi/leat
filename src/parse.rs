@@ -45,7 +45,12 @@ impl Expr {
             let catch = tokens.get(1..)?.join(&Token::Catch);
             let catch = Box::new(Expr::parse(catch)?);
             Some(Expr::Try(trys, catch))
-        } else if let [Token::Number(a), Token::Dot, Token::Number(b)] = tokens.as_slice() {
+        } else if let [
+            Token::Number(a),
+            Token::Dot | Token::Comma,
+            Token::Number(b),
+        ] = tokens.as_slice()
+        {
             let number = format!("{a}.{b}").parse::<f64>().unwrap();
             Some(Expr::Literal(Value::Number(number)))
         } else if tokens.len() >= 2 {
