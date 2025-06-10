@@ -53,18 +53,17 @@ impl Expr {
             for i in 2..=tokens.len() - 1 {
                 if let Token::Ident(operator) = tokens.get(tokens.len() - i)? {
                     if operator.chars().all(|c| c.is_ascii_punctuation()) {
-                        if let Some(lhs) = Expr::parse(tokens.get(..tokens.len() - i)?.to_vec()) {
-                            if let Some(rhs) =
-                                Expr::parse(tokens.get(tokens.len() - i + 1..)?.to_vec())
-                            {
-                                return Some(Expr::Call(
-                                    Box::new(Expr::Call(
-                                        Box::new(Expr::Variable(operator.to_owned())),
-                                        Box::new(lhs),
-                                    )),
-                                    Box::new(rhs),
-                                ));
-                            }
+                        if let [Some(lhs), Some(rhs)] = [
+                            Expr::parse(tokens.get(..tokens.len() - i)?.to_vec()),
+                            Expr::parse(tokens.get(tokens.len() - i + 1..)?.to_vec()),
+                        ] {
+                            return Some(Expr::Call(
+                                Box::new(Expr::Call(
+                                    Box::new(Expr::Variable(operator.to_owned())),
+                                    Box::new(lhs),
+                                )),
+                                Box::new(rhs),
+                            ));
                         }
                     }
                 }
