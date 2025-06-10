@@ -1,5 +1,3 @@
-use crossterm::cursor;
-
 use crate::*;
 
 pub fn lex(input: &str) -> Option<Vec<Token>> {
@@ -102,7 +100,7 @@ pub fn f_string(input: &str) -> Option<Vec<Token>> {
             is_escape = false;
             match c {
                 '{' if in_parentheses == 0 => {
-                    tokens.push(Token::String(current_token));
+                    tokens.push(Token::String(current_token.clone()));
                     current_token.clear();
                     in_parentheses += 1;
                 }
@@ -122,7 +120,7 @@ pub fn f_string(input: &str) -> Option<Vec<Token>> {
     }
 
     // Syntax error check
-    if is_escape || in_quote || in_parentheses != 0 {
+    if is_escape || in_parentheses != 0 {
         return None;
     }
     if !current_token.is_empty() {
