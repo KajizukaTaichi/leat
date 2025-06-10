@@ -293,7 +293,7 @@ pub fn stdlib() -> Env {
         ),
         (
             String::from("join"),
-            curry_2arg!(|array, del, env: &mut Env| {
+            curry_2arg!(|array, del, _| {
                 let Value::Array(array) = array else {
                     return Err(LeatError::TypeMismatch(Type::Array));
                 };
