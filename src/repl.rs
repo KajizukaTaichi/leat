@@ -17,7 +17,7 @@ pub fn repl() {
 
     rl.bind_sequence(
         KeyEvent(KeyCode::Tab, Modifiers::NONE),
-        Cmd::Insert(4, String::from(" ")),
+        Cmd::Insert(0, String::from("\t")),
     );
 
     loop {
