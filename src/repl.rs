@@ -23,8 +23,7 @@ pub fn repl() {
     loop {
         let [r, g, b] = [127, 127, 127];
         let grey = Color::TrueColor { r, g, b };
-        print!("{}", "> ".color(grey));
-        match rl.readline("") {
+        match rl.readline(&"> ".color(grey).to_string()) {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
