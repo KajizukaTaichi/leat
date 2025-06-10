@@ -1,9 +1,10 @@
-use crate::*;
+use crate::{lexer::f_string, *};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Number(f64),
     String(String),
+    FString(Vec<Token>),
     Bool(bool),
     Ident(String),
     Nest(Vec<Token>),
@@ -64,6 +65,8 @@ impl Token {
             Token::Number(n)
         } else if let Some(Some(string)) = token.strip_prefix("\"").map(|x| x.strip_suffix("\"")) {
             Token::String(string.to_string())
+        } else if let Some(Some(string)) = token.strip_prefix("f\"").map(|x| x.strip_suffix("\"")) {
+            Token::FString(f_string(string)?)
         } else if let Some(Some(nest)) = token.strip_prefix("(").map(|x| x.strip_suffix(")")) {
             Token::Nest(lex(nest)?)
         } else if let Some(Some(nest)) = token.strip_prefix("[").map(|x| x.strip_suffix("]")) {
