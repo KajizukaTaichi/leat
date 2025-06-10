@@ -8,7 +8,7 @@ mod token;
 
 use colored::*;
 use indexmap::IndexMap;
-use rustyline::{DefaultEditor, error::ReadlineError};
+use rustyline::{error::ReadlineError, DefaultEditor};
 pub use {lexer::lex, stdlib::stdlib, token::Token};
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
     let mut env = stdlib();
     let mut line = 0;
     loop {
-        match rl.readline(&format!("{line:<0}|: ")) {
+        match rl.readline(&format!("{line:>3}| ")) {
             Ok(code) => {
                 buf.push_str(&code);
                 buf.push_str("\n");
