@@ -107,7 +107,7 @@ pub fn f_string(input: &str) -> Option<Vec<Token>> {
                 '}' => {
                     in_parentheses.checked_sub(1).map(|x| in_parentheses = x);
                     if in_parentheses == 0 {
-                        tokens.append(&mut lex(&current_token)?);
+                        tokens.push(Token::Nest(lex(&current_token)?));
                     }
                 }
                 '`' => {
