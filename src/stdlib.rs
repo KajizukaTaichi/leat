@@ -130,6 +130,7 @@ pub fn stdlib() -> Env {
                     Value::Array(_) => Ok(Value::Type(Type::Array)),
                     Value::Lambda(_) => Ok(Value::Type(Type::Lambda)),
                     Value::Type(_) => Ok(Value::Type(Type::Kind)),
+                    Value::Null => Ok(Value::Type(Type::Kind)),
                 },
                 IndexMap::new(),
             )),
