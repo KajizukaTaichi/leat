@@ -1,3 +1,4 @@
+mod cmp;
 mod eval;
 mod fmt;
 mod lexer;
@@ -25,7 +26,7 @@ pub enum Expr {
     Literal(Value),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Value {
     Number(f64),
     String(String),
@@ -52,16 +53,6 @@ type Env = IndexMap<String, Value>;
 pub enum Lambda {
     BuiltIn(fn(Value, Env) -> Result<Value, LeatError>, Env),
     UserDefined(String, Box<Expr>, Env),
-}
-
-impl PartialEq for Lambda {
-    fn eq(&self, other: &Lambda) -> bool {
-        match [self, other] {
-            [Lambda::BuiltIn(a, _), Lambda::BuiltIn(b, _)] => format!("{a:?}") == format!("{b:?}"),
-            [Lambda::UserDefined(_, a, _), Lambda::UserDefined(_, b, _)] => a == b,
-            _ => false,
-        }
-    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
