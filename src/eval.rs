@@ -22,25 +22,27 @@ impl Expr {
                     .map(|x| x.eval(env))
                     .collect::<Result<Vec<_>, LeatError>>()?,
             )),
-            Expr::Call(func, arg) => {
-                let Value::Lambda(lambda) = func.eval(env)? else {
-                    return Err(LeatError::NonLambda(*func.clone()));
-                };
-                match lambda {
-                    Lambda::BuiltIn(body, func_env) => {
-                        let mut env = env.clone();
-                        env.extend(func_env.clone());
-                        body(arg.eval(&mut env)?, env.clone())
-                    }
-                    Lambda::UserDefined(arg_name, body, func_env) => {
-                        let mut env = env.clone();
-                        env.extend(func_env.clone());
-                        let value = arg.eval(&mut env)?;
-                        env.insert(arg_name, value);
-                        body.eval(&mut env)
-                    }
+            Expr::Call(func, arg) => match func.eval(env)? {
+                Value::Lambda(Lambda::BuiltIn(body, func_env)) => {
+                    let mut env = env.clone();
+                    env.extend(func_env.clone());
+                    body(arg.eval(&mut env)?, env.clone())
                 }
-            }
+                Value::Lambda(Lambda::UserDefined(arg_name, body, func_env)) => {
+                    let mut env = env.clone();
+                    env.extend(func_env.clone());
+                    let value = arg.eval(&mut env)?;
+                    env.insert(arg_name, value);
+                    body.eval(&mut env)
+                }
+                Value::Array(array) => {
+                    let Value::Number(index) = arg.eval(env)? else {
+                        return Err(LeatError::TypeMismatch(Type::Number));
+                    };
+                    ok!(array.get(index as usize)).cloned()
+                }
+                _ => Err(LeatError::NonLambda(*func.clone())),
+            },
             Expr::Let(name, value, after_expr) => match *name.clone() {
                 Expr::Variable(name) => {
                     let value = value.eval(&mut env.clone())?;
