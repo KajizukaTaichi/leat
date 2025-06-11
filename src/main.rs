@@ -11,6 +11,17 @@ mod token;
 use indexmap::IndexMap;
 pub use {lexer::lex, repl::repl, stdlib::stdlib, token::Token};
 
+#[macro_export]
+macro_rules! ok {
+    ($value: expr) => {
+        if let Some(result) = $value {
+            Ok(result)
+        } else {
+            Err(LeatError::InvalidOperation)
+        }
+    };
+}
+
 fn main() {
     repl();
 }
