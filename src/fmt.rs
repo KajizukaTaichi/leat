@@ -51,7 +51,7 @@ impl Display for Value {
             }
             Value::Lambda(Lambda::BuiltIn(func, _)) => write!(f, "(\\x. {func:?})"),
             Value::Type(typ) => write!(f, "{typ}"),
-            Value::Null => write!(f, "null"),
+            Value::Null => write!(f, "_"),
         }
     }
 }
