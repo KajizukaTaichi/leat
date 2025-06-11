@@ -31,8 +31,13 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                     in_quote = !in_quote;
                     current_token.push(c);
                 }
-                '\\' if in_parentheses == 0 && current_token.is_empty() => {
-                    tokens.push(Token::Lambda);
+                '\\' => {
+                    if in_parentheses == 0 && current_token.is_empty() {
+                        tokens.push(Token::Lambda);
+                    } else {
+                        current_token.push(c);
+                        is_escape = true;
+                    }
                 }
                 '.' if in_parentheses == 0 => {
                     if !current_token.is_empty() {
@@ -47,10 +52,6 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                         current_token.clear();
                     }
                     tokens.push(Token::Comma);
-                }
-                '`' => {
-                    current_token.push(c);
-                    is_escape = true;
                 }
                 other => {
                     if other.is_whitespace() && !in_quote {
