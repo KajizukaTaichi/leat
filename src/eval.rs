@@ -39,7 +39,9 @@ impl Expr {
                     let Value::Number(index) = arg.eval(env)? else {
                         return Err(LeatError::TypeMismatch(Type::Number));
                     };
-                    ok!(array.get(index as usize)).cloned()
+                    let len = array.len() as f64;
+                    let index = if index < 0.0 { len + index } else { index };
+                    Ok(array[(index % len) as usize].clone())
                 }
                 _ => Err(LeatError::NonLambda(*func.clone())),
             },
