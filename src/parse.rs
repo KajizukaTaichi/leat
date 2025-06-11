@@ -45,11 +45,8 @@ impl Expr {
             let catch = tokens.get(1..)?.join(&Token::Catch);
             let catch = Box::new(Expr::parse(catch)?);
             Some(Expr::Try(trys, catch))
-        } else if let [
-            Token::Number(a),
-            Token::Dot | Token::Comma,
-            Token::Number(b),
-        ] = tokens.as_slice()
+        } else if let [Token::Number(a), Token::Dot | Token::Comma, Token::Number(b)] =
+            tokens.as_slice()
         {
             let number = format!("{a}.{b}").parse::<f64>().unwrap();
             Some(Expr::Literal(Value::Number(number)))
@@ -81,7 +78,7 @@ impl Expr {
                 Token::String(s) => Some(Expr::Literal(Value::String(text_escape(s)))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
                 Token::Type(t) => Some(Expr::Literal(Value::Type(t.clone()))),
-                Token::Ident(name) if name == "null" => Some(Expr::Variable(name.to_owned())),
+                Token::Ident(name) if name == "null" => Some(Expr::Literal(Value::Null)),
                 Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
                 Token::Nest(tokens) => Some(Expr::parse(tokens.to_vec())?),
                 Token::Array(tokens) => Some(Expr::Array(
