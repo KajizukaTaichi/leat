@@ -13,6 +13,7 @@ pub fn lex(input: &str) -> Option<Vec<Token>> {
                 'n' => '\n',
                 't' => '\t',
                 'r' => '\r',
+                '0'=>'\0'
                 _ => c,
             });
             is_escape = false;
