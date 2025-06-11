@@ -33,6 +33,7 @@ pub enum Value {
     Array(Vec<Value>),
     Lambda(Lambda),
     Type(Type),
+    Null,
 }
 
 #[derive(Clone, Debug, PartialEq)]
