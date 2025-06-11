@@ -81,6 +81,7 @@ impl Expr {
                 Token::String(s) => Some(Expr::Literal(Value::String(text_escape(s)))),
                 Token::Bool(b) => Some(Expr::Literal(Value::Bool(*b))),
                 Token::Type(t) => Some(Expr::Literal(Value::Type(t.clone()))),
+                Token::Ident(name) if name == "null" => Some(Expr::Variable(name.to_owned())),
                 Token::Ident(name) => Some(Expr::Variable(name.to_owned())),
                 Token::Nest(tokens) => Some(Expr::parse(tokens.to_vec())?),
                 Token::Array(tokens) => Some(Expr::Array(
