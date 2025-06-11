@@ -20,15 +20,6 @@ pub fn stdlib() -> Env {
             ))
         };
     }
-    macro_rules! ok {
-        ($value: expr) => {{
-            if let Some(result) = $value {
-                Ok(result)
-            } else {
-                Err(LeatError::InvalidOperation)
-            }
-        }};
-    }
     IndexMap::from([
         (
             String::from("+"),
