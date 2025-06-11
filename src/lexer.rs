@@ -113,7 +113,7 @@ pub fn f_string(input: &str) -> Option<Vec<Token>> {
                         current_token.clear();
                     }
                 }
-                '`' => {
+                '\\' => {
                     current_token.push(c);
                     is_escape = true;
                 }
@@ -143,7 +143,7 @@ pub fn text_escape(text: &str) -> String {
             is_escape = false;
         } else {
             match c {
-                '`' => {
+                '\\' => {
                     is_escape = true;
                 }
                 _ => result.push(c),
