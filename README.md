@@ -23,7 +23,7 @@ let fizzbuzz n := (
     else if n % 5 == 0 then "Buzz"
     else cast n #string
 ) in
-join (map fizzbuzz (1 ~ 101)) "`n"
+join (map fizzbuzz (1 ~ 101)) "\n"
 ```
 
 ```ocaml
