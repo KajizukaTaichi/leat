@@ -41,4 +41,3 @@ in
 to_num (add (church 3) (church 2))
 ```
 
-**梶塚太智　作**
